@@ -50,23 +50,8 @@ public class RetrofitModule {
     @Provides
     @Singleton
     Gson provideGson() {
-        return new GsonBuilder()
-//                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-//                .setFieldNamingStrategy(new CustomFieldNamingPolicy())
-//                .setPrettyPrinting()
-//                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-//                .serializeNulls()
-                .create();
+        return new GsonBuilder().create();
     }
 
-    private static class CustomFieldNamingPolicy implements FieldNamingStrategy {
-
-        @Override
-        public String translateName(Field field) {
-            String name = FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES.translateName(field);
-            name = name.substring(2, name.length()).toLowerCase();
-            return name;
-        }
-    }
 
 }

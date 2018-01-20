@@ -30,8 +30,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
         FoursquareApi foursquareApi = mRetrofit.create(FoursquareApi.class);
 
-        return foursquareApi
-                .executeSearchNearbyPlacesQuery("50.450100,30.523400", "browse", "200")
+        return foursquareApi.executeSearchNearbyPlacesQuery("50.450100,30.523400", "browse", "200")
                 .flatMap(
                         respond -> Observable.fromIterable(respond.getResponse().getVenues())
                                 .flatMap(venue ->

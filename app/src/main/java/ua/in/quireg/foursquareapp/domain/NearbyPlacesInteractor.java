@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers;
 import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
+import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryStubImpl;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
 
@@ -23,7 +24,7 @@ public class NearbyPlacesInteractor {
 
     private static final String PREFFERED_IMAGE_SIZE = "100x100";
 
-    private PlacesRepository placesRepository = new PlacesRepositoryImpl();
+    private PlacesRepository placesRepository = new PlacesRepositoryStubImpl();
 
     public Observable<List<PlaceEntity>> getNearbyPlaces() {
 
