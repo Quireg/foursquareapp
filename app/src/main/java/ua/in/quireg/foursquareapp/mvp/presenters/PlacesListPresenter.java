@@ -17,7 +17,7 @@ import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 @InjectViewState
 public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onFirstViewAttach() {

@@ -38,14 +38,14 @@ public class PlacesListFragment extends MvpAppCompatFragment implements PlacesLi
     @InjectPresenter(type = PresenterType.WEAK)
     PlacesListPresenter mPlacesListPresenter;
 
-    private PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
+    PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mPlacesListRecyclerViewAdapter = new PlacesListRecyclerViewAdapter();
+        mPlacesListRecyclerViewAdapter = new PlacesListRecyclerViewAdapter(getContext());
     }
 
     @Override

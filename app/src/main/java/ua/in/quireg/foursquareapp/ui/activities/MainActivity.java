@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         public void navigatePlacesList() {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new PlacesListFragment())
+                    .replace(R.id.fragment_container, new PlacesListFragment())
                     .commit();
 
             getSupportActionBar().setLogo(R.drawable.ic_logo);

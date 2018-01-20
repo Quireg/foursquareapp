@@ -12,10 +12,11 @@ public class PlaceEntity {
     private String name = "Unknown";
     private String type = "Uncategorized";
     private String priceCategory = "$";
-    private String address = "w/o address";
+    private String address = "";
     private String distanceTo = "?";
-    private Uri image;
-    private String rating = "?";
+    private Uri image = Uri.parse("https://cdn2.iconfinder.com/data/icons/picons-essentials/71/smiley_sad-512.png");
+    private String rating = "";
+    private String ratingColor = "#00000000";
 
     public String getName() {
         return name;
@@ -71,5 +72,13 @@ public class PlaceEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getRatingColor() {
+        return ratingColor;
+    }
+
+    public void setRatingColor(String ratingColor) {
+        this.ratingColor = ratingColor;
     }
 }

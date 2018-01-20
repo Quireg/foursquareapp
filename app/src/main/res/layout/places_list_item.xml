@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -8,9 +10,9 @@
 
     <ImageView
         android:id="@+id/places_list_image"
-        android:layout_height="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
         android:layout_width="0dp"
-        android:scaleType="fitEnd"
+        android:scaleType="fitCenter"
         android:layout_weight="0.25" />
 
     <LinearLayout
@@ -18,14 +20,16 @@
         android:layout_width="0dp"
         android:orientation="vertical"
         android:layout_weight="0.55"
-        android:weightSum="3">
+        android:weightSum="3"
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/places_list_title"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:singleLine="true" />
+            android:singleLine="true"
+            tools:ignore="NestedWeights" />
 
         <TextView
             android:id="@+id/places_list_type_and_priceCategory"
@@ -42,17 +46,29 @@
             android:singleLine="true" />
     </LinearLayout>
 
-    <LinearLayout
+    <!--<LinearLayout-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="0.2">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@drawable/circle_shape"-->
+            <!--app:srcCompat="@color/transparent" />-->
+
+        <!---->
+    <!--</LinearLayout>-->
+
+    <TextView
+        android:background="@drawable/circle_shape"
+        android:id="@+id/places_list_rating"
+        android:padding="4dp"
         android:layout_height="match_parent"
         android:layout_width="0dp"
-        android:layout_weight="0.2">
-
-        <TextView
-            android:id="@+id/places_list_rating"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center" />
-    </LinearLayout>
+        android:layout_weight="0.2"
+        android:layout_gravity="center"
+        android:gravity="center" />
 
 </LinearLayout>

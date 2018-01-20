@@ -65,6 +65,9 @@ dependencies {
     //Logging
     implementation 'com.jakewharton.timber:timber:4.6.0'
 
+    //Pictures
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
     //DI
     implementation "com.google.dagger:dagger:$dagger2Version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger2Version"

@@ -3,7 +3,7 @@ package ua.in.quireg.foursquareapp.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import ua.in.quireg.foursquareapp.repositories.NearbyPlacesRepositoryImpl;
+import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 
 /**
@@ -17,6 +17,6 @@ public interface AppComponent {
 
     void inject(MainActivity activity);
 
-    void inject(NearbyPlacesRepositoryImpl i);
+    void inject(PlacesRepositoryImpl i);
 
 }
