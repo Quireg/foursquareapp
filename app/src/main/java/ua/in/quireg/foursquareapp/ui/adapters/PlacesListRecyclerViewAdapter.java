@@ -3,18 +3,17 @@ package ua.in.quireg.foursquareapp.ui.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import timber.log.Timber;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 
@@ -23,50 +22,120 @@ import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
  * foursquareapp
  */
 
-public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<PlacesListRecyclerViewAdapter.PlaceEntityViewHolder> {
+public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<PlaceEntity> mItemsList;
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
 
     private Context mContext;
+    private String mListTitle;
+    private List<PlaceEntity> mItemsList = new LinkedList<>();
+
+    private static final int HEADERS_COUNT = 1;
 
     public PlacesListRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
     @Override
-    public PlaceEntityViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.places_list_item, parent, false);
-        return new PlaceEntityViewHolder(itemView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        switch (viewType) {
+            case TYPE_HEADER: {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.places_list_header, parent, false);
+                return new ListHeaderViewHolder(itemView);
+            }
+            case TYPE_ITEM: {
+                View itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.places_list_item, parent, false);
+                return new PlaceEntityViewHolder(itemView);
+            }
+            default: {
+                throw new RuntimeException("Unknown view type");
+            }
+        }
+
     }
 
     @Override
-    public void onBindViewHolder(PlaceEntityViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        position = position - HEADERS_COUNT;
 
-        PlaceEntity placeEntity = mItemsList.get(position);
+        if (holder instanceof ListHeaderViewHolder) {
+            ((ListHeaderViewHolder) holder).title.setText(mListTitle);
+        }
 
-        holder.title.setText(placeEntity.getName());
+        if (holder instanceof PlaceEntityViewHolder) {
 
-        holder.type_and_priceCategory.setText(String.format("%s, %s", placeEntity.getType(), placeEntity.getPriceCategory()));
+            PlaceEntity placeEntity = mItemsList.get(position);
 
-        holder.distance_and_address.setText(String.format("%sm, %s", placeEntity.getDistanceTo(), placeEntity.getAddress()));
+            ((PlaceEntityViewHolder) holder).title.setText(
+                    placeEntity.getName()
+            );
 
-        holder.rating.setText(placeEntity.getRating());
+            ((PlaceEntityViewHolder) holder).type_and_priceCategory.setText(
+                    String.format("%s, %s", placeEntity.getType(), placeEntity.getPriceCategory())
+            );
 
-        holder.rating.setBackgroundColor(Color.parseColor(placeEntity.getRatingColor()));
+            if (placeEntity.getAddress().isEmpty()) {
+                ((PlaceEntityViewHolder) holder).distance_and_address.setText(
+                        String.format(
+                                "%s steps away",
+                                convertMetersIntoSteps(placeEntity.getDistanceTo()
+                                )
+                        )
+                );
+            } else {
+                ((PlaceEntityViewHolder) holder).distance_and_address.setText(
+                        String.format(
+                                "%s steps away%s",
+                                convertMetersIntoSteps(placeEntity.getDistanceTo()),
+                                String.format(" at %s", placeEntity.getAddress())
+                        )
+                );
+            }
 
-        Picasso.with(mContext).load(placeEntity.getImage()).into(holder.image);
+            ((PlaceEntityViewHolder) holder).rating.setText(
+                    placeEntity.getRating()
+            );
+
+            ((PlaceEntityViewHolder) holder).rating.setTextColor(
+                    Color.parseColor(placeEntity.getRatingColor())
+            );
+
+            if(placeEntity.getImageUri() != null) {
+                Glide.with(mContext)
+                        .load(placeEntity.getImageUri())
+                        .into(((PlaceEntityViewHolder) holder).image);
+            }
+
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return mItemsList != null ? mItemsList.size() : 0;
+        return mItemsList.size() + HEADERS_COUNT;
     }
 
-    public void updateList(List<PlaceEntity> newList) {
-        mItemsList = newList;
-        notifyDataSetChanged();
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) return TYPE_HEADER;
+
+        return TYPE_ITEM;
+    }
+
+    public void updateList(List<PlaceEntity> list, String title) {
+        int itemCount = getItemCount();
+        if (itemCount > 0) {
+            mItemsList.clear();
+            notifyItemRangeRemoved(0, itemCount);
+        }
+        mListTitle = title;
+        mItemsList.addAll(list);
+        notifyItemRangeInserted(0, getItemCount());
+
     }
 
     class PlaceEntityViewHolder extends RecyclerView.ViewHolder {
@@ -83,4 +152,19 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<PlacesLi
             rating = view.findViewById(R.id.places_list_rating);
         }
     }
+
+    class ListHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        TextView title;
+
+        ListHeaderViewHolder(View itemView) {
+            super(itemView);
+            title = itemView.findViewById(R.id.list_header_textview);
+        }
+    }
+
+    private String convertMetersIntoSteps(String meters) {
+        return String.valueOf(Math.round(Integer.parseInt(meters) * 1.5));
+    }
+
 }

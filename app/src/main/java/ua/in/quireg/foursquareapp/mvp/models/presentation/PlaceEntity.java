@@ -1,6 +1,8 @@
 package ua.in.quireg.foursquareapp.mvp.models.presentation;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 4:31 PM.
@@ -9,16 +11,18 @@ import android.net.Uri;
 
 public class PlaceEntity {
 
+    private static final String PREFERRED_IMAGE_SIZE = "100x100";
+
     private String name = "Unknown";
     private String type = "Uncategorized";
     private String priceCategory = "$";
     private String address = "";
     private String distanceTo = "?";
-    private Uri image = Uri.parse("https://cdn2.iconfinder.com/data/icons/picons-essentials/71/smiley_sad-512.png");
-    private String rating = "";
-    private String ratingColor = "#00000000";
+    private Uri imageUri;
+    private String rating = "^_^";
+    private String ratingColor = "#1B5E20";
 
-    public String getName() {
+    @NonNull public String getName() {
         return name;
     }
 
@@ -26,7 +30,7 @@ public class PlaceEntity {
         this.name = name;
     }
 
-    public String getType() {
+    @NonNull public String getType() {
         return type;
     }
 
@@ -34,7 +38,7 @@ public class PlaceEntity {
         this.type = type;
     }
 
-    public String getPriceCategory() {
+    @NonNull public String getPriceCategory() {
         return priceCategory;
     }
 
@@ -42,7 +46,7 @@ public class PlaceEntity {
         this.priceCategory = priceCategory;
     }
 
-    public String getDistanceTo() {
+    @NonNull public String getDistanceTo() {
         return distanceTo;
     }
 
@@ -50,15 +54,19 @@ public class PlaceEntity {
         this.distanceTo = distanceTo;
     }
 
-    public Uri getImage() {
-        return image;
+    @Nullable public Uri getImageUri() {
+        return imageUri;
     }
 
-    public void setImage(Uri image) {
-        this.image = image;
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
     }
 
-    public String getRating() {
+    public void setImageUri(String prefix, String suffix) {
+        this.imageUri = Uri.parse(prefix.concat(PREFERRED_IMAGE_SIZE).concat(suffix));
+    }
+
+    @NonNull public String getRating() {
         return rating;
     }
 
@@ -66,7 +74,7 @@ public class PlaceEntity {
         this.rating = rating;
     }
 
-    public String getAddress() {
+    @NonNull public String getAddress() {
         return address;
     }
 
@@ -74,7 +82,7 @@ public class PlaceEntity {
         this.address = address;
     }
 
-    public String getRatingColor() {
+    @NonNull public String getRatingColor() {
         return ratingColor;
     }
 

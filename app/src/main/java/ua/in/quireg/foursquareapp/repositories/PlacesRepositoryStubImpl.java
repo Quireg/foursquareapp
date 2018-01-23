@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
+import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.PlacesNearbyRespond;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
@@ -25,10 +26,10 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public class PlacesRepositoryStubImpl implements PlacesRepository {
 
-    @Inject Context mContext;
+    private ResourceManager mManager;
 
-    public PlacesRepositoryStubImpl() {
-        FoursquareApplication.getAppComponent().inject(this);
+    public PlacesRepositoryStubImpl(ResourceManager manager) {
+        mManager = manager;
     }
 
     @Override
@@ -36,8 +37,8 @@ public class PlacesRepositoryStubImpl implements PlacesRepository {
         ArrayList<Pair<Venue, VenueExtended>> arrayList = new ArrayList<>();
 
         try {
-            String venues_search = Utils.convertStreamToString(mContext.getAssets().open("venues_search.json"));
-            String single_venue = Utils.convertStreamToString(mContext.getAssets().open("single_venue.json"));
+            String venues_search = Utils.convertStreamToString(mManager.getFileInputStreamFromAssets("venues_search.json"));
+            String single_venue = Utils.convertStreamToString(mManager.getFileInputStreamFromAssets("single_venue.json"));
 
             PlacesNearbyRespond placesNearbyRespond = new Gson().fromJson(venues_search, PlacesNearbyRespond.class);
             SingleVenueRespond singleVenueRespond = new Gson().fromJson(single_venue, SingleVenueRespond.class);

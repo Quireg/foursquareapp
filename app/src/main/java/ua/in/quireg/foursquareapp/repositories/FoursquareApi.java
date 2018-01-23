@@ -1,6 +1,7 @@
 package ua.in.quireg.foursquareapp.repositories;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -18,7 +19,7 @@ public interface FoursquareApi {
     String radius = "20";
 
     @GET("venues/search")
-    Observable<PlacesNearbyRespond> executeSearchNearbyPlacesQuery(@Query("ll") String latLonCommaSeparated, @Query("intent") String intent, @Query("radius") String radius);
+    Observable<PlacesNearbyRespond> executeSearchNearbyPlacesQuery(@Query("ll") String latLonCommaSeparated, @Query("intent") String intent, @Query("radius") String radius, @Query("limit") String limit);
 
     @GET("venues/{venueId}")
     Observable<SingleVenueRespond> executeObtainPlaceInfo(@Path("venueId") String venueId);

@@ -1,74 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:weightSum="1">
+    android:padding="4dp"
+    tools:ignore="RtlHardcoded, RtlSymmetry, ContentDescription">
 
-    <ImageView
-        android:id="@+id/places_list_image"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_width="0dp"
-        android:scaleType="fitCenter"
-        android:layout_weight="0.25" />
+    <FrameLayout
+        android:id="@+id/icon_container"
+        android:layout_width="@dimen/list_icon_width_height"
+        android:layout_height="@dimen/list_icon_width_height"
+        android:padding="4dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/places_list_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/doge" />
+
+    </FrameLayout>
 
     <LinearLayout
-        android:layout_height="match_parent"
+        android:id="@+id/text_layout"
         android:layout_width="0dp"
+        android:padding="4dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/icon_container"
+        android:layout_toLeftOf="@id/places_list_rating"
         android:orientation="vertical"
-        android:layout_weight="0.55"
-        android:weightSum="3"
-        android:padding="4dp">
+        android:weightSum="7">
 
         <TextView
             android:id="@+id/places_list_title"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:singleLine="true"
-            tools:ignore="NestedWeights" />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="@dimen/msg_text_primary"
+            tools:text="Central Park" />
 
         <TextView
             android:id="@+id/places_list_type_and_priceCategory"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:singleLine="true" />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="@dimen/msg_text_secondary"
+            tools:text="Park, $$$" />
 
         <TextView
             android:id="@+id/places_list_distance_and_address"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:singleLine="true" />
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textSize="@dimen/msg_text_secondary"
+            tools:text="16m, 59th St to 110th St" />
+
     </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_weight="0.2">-->
-
-        <!--<ImageView-->
-            <!--android:id="@+id/imageView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@drawable/circle_shape"-->
-            <!--app:srcCompat="@color/transparent" />-->
-
-        <!---->
-    <!--</LinearLayout>-->
 
     <TextView
-        android:background="@drawable/circle_shape"
         android:id="@+id/places_list_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:padding="4dp"
-        android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="0.2"
-        android:layout_gravity="center"
-        android:gravity="center" />
+        android:textStyle="bold"
+        tools:text="^_^" />
 
-</LinearLayout>
+
+</RelativeLayout>

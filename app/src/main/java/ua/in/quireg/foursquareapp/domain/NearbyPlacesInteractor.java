@@ -6,12 +6,15 @@ import android.support.v4.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import ua.in.quireg.foursquareapp.FoursquareApplication;
+import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
-import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
-import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryStubImpl;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
 
@@ -22,18 +25,21 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public class NearbyPlacesInteractor {
 
-    private static final String PREFFERED_IMAGE_SIZE = "100x100";
 
-    private PlacesRepository placesRepository = new PlacesRepositoryStubImpl();
+    @Inject @Named("release") PlacesRepository mPlacesRepository;
+
+    public NearbyPlacesInteractor() {
+        FoursquareApplication.getAppComponent().inject(this);
+    }
 
     public Observable<List<PlaceEntity>> getNearbyPlaces() {
 
-        return placesRepository.getPlaces()
+        return mPlacesRepository.getPlaces()
                 .subscribeOn(Schedulers.io())
-                .map(this::mapEntitiesList);
+                .map(NearbyPlacesInteractor::mapEntitiesList);
     }
 
-    private List<PlaceEntity> mapEntitiesList(List<Pair<Venue, VenueExtended>> venues) {
+    private static List<PlaceEntity> mapEntitiesList(List<Pair<Venue, VenueExtended>> venues) {
         ArrayList<PlaceEntity> placeEntityArrayList = new ArrayList<>();
 
         for (Pair<Venue, VenueExtended> v : venues) {
@@ -42,18 +48,25 @@ public class NearbyPlacesInteractor {
         return placeEntityArrayList;
     }
 
-    private PlaceEntity mapEntities(Pair<Venue, VenueExtended> pair) {
+    private static PlaceEntity mapEntities(Pair<Venue, VenueExtended> pair) {
 
         PlaceEntity placeEntity = new PlaceEntity();
 
         Venue venue = pair.first;
         VenueExtended venueExtended = pair.second;
 
+        if(venue == null || venueExtended == null) {
+            throw new RuntimeException("received null response from api");
+        }
+
         if (venue.getName() != null) {
             placeEntity.setName(venue.getName());
         }
         if (venue.getLocation() != null && venue.getLocation().getDistance() != null) {
             placeEntity.setDistanceTo(venue.getLocation().getDistance().toString());
+        }
+        if (venue.getCategories() != null && !venue.getCategories().isEmpty() && venue.getCategories().get(0).getName() != null) {
+            placeEntity.setType(venue.getCategories().get(0).getName());
         }
         if (venueExtended.getRating() != null) {
             placeEntity.setRating(String.valueOf(venueExtended.getRating()));
@@ -64,16 +77,12 @@ public class NearbyPlacesInteractor {
         if (venueExtended.getPrice() != null && venueExtended.getPrice().getTier() != null) {
             placeEntity.setPriceCategory(new String(new char[venueExtended.getPrice().getTier()]).replace("\0", "$"));
         }
-        if (venue.getLocation() != null && venueExtended.getLocation().getAddress() != null) {
+        if (venueExtended.getLocation() != null && venueExtended.getLocation().getAddress() != null) {
             placeEntity.setAddress(venueExtended.getLocation().getAddress());
         }
-        if (venue.getCategories() != null && !venue.getCategories().isEmpty() && venue.getCategories().get(0).getName() != null) {
-            placeEntity.setType(venue.getCategories().get(0).getName());
-        }
+
         if (venueExtended.getBestPhoto() != null) {
-            placeEntity.setImage(
-                    Uri.parse(String.format("%s%s%s", venueExtended.getBestPhoto().getPrefix(), PREFFERED_IMAGE_SIZE, venueExtended.getBestPhoto().getSuffix()))
-            );
+            placeEntity.setImageUri(venueExtended.getBestPhoto().getPrefix(), venueExtended.getBestPhoto().getSuffix());
         }
         return placeEntity;
     }

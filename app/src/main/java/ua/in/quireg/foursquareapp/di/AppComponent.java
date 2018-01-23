@@ -3,6 +3,8 @@ package ua.in.quireg.foursquareapp.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ua.in.quireg.foursquareapp.domain.NearbyPlacesInteractor;
+import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryStubImpl;
 import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
@@ -13,12 +15,13 @@ import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
  */
 
 @Singleton
-@Component(modules = {BaseModule.class, NavigationModule.class, OkHttpModule.class, RetrofitModule.class})
+@Component(modules = {BaseModule.class, NavigationModule.class, OkHttpModule.class, RetrofitModule.class, RepositoryModule.class})
 public interface AppComponent {
 
     void inject(MainActivity activity);
-
     void inject(PlacesRepositoryImpl i);
     void inject(PlacesRepositoryStubImpl i);
+    void inject(PlacesListPresenter i);
+    void inject(NearbyPlacesInteractor i);
 
 }

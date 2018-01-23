@@ -4,11 +4,8 @@ import android.support.v4.util.Pair;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
-import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
 
@@ -19,10 +16,11 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public class PlacesRepositoryImpl implements PlacesRepository {
 
-    @Inject Retrofit mRetrofit;
+    private Retrofit mRetrofit;
 
-    public PlacesRepositoryImpl() {
-        FoursquareApplication.getAppComponent().inject(this);
+    public PlacesRepositoryImpl(Retrofit retrofit) {
+        mRetrofit = retrofit;
+
     }
 
     @Override
@@ -30,9 +28,9 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
         FoursquareApi foursquareApi = mRetrofit.create(FoursquareApi.class);
 
-        return foursquareApi.executeSearchNearbyPlacesQuery("50.450100,30.523400", "browse", "200")
-                .flatMap(
-                        respond -> Observable.fromIterable(respond.getResponse().getVenues())
+        return foursquareApi.executeSearchNearbyPlacesQuery("50.450100,30.523400", "browse", "200", "50")
+                .flatMap(respond ->
+                        Observable.fromIterable(respond.getResponse().getVenues())
                                 .flatMap(venue ->
                                         foursquareApi
                                                 .executeObtainPlaceInfo(venue.getId())

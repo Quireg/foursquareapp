@@ -15,5 +15,7 @@ public interface PlacesListView extends MvpView {
 
     void showLoading();
 
-    void showPlaces(List<PlaceEntity> places);
+    void showPlaces(List<PlaceEntity> places, String title);
+
+    void showErrorView(String text);
 }

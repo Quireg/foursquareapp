@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">4 Square</string>
-    <string name="search_title">Search</string>
+    <string name="menu_search_title">Search</string>
+    <string name="menu_refresh_title">Refresh</string>
+    <string name="default_list_title">Some places around. Search for more.</string>
     <string name="loading">Loading…</string>
 </resources>

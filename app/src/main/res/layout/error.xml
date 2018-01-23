@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingBottom="12dp"
+    android:paddingTop="44dp"
+    tools:ignore="ContentDescription, RtlSymmetry">
+
+    <ImageView
+        android:id="@+id/error_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="8dp"
+        android:src="@android:drawable/ic_dialog_alert" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="52dp">
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="?android:textColorSecondary"
+            tools:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+            tools:text="Switch subscribes to an Observable that emits Observables. \
+            Each time it observes one of these emitted Observables,
+             the Observable returned by Switch unsubscribes from the previously-emitted Observable begins emitting items from the latest Observable.
+               Note that it will unsubscribe from the previously-emitted Observable when a new Observable is emitted  from the source Observable,
+                not when the new Observable emits an item.
+             This means that items emitted by the previous Observable between the time the subsequent Observable is emitted and the time that subsequent
+                Observable itself begins emitting items will be dropped (as with the yellow circle in the diagram above)."
+            />
+
+    </ScrollView>
+</RelativeLayout>

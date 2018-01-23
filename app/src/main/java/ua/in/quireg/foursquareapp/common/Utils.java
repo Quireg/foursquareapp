@@ -1,5 +1,8 @@
 package ua.in.quireg.foursquareapp.common;
 
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +34,18 @@ public class Utils {
         //Make sure you close all streams.
         fin.close();
         return ret;
+    }
+
+    public static int convertPixelsToDp(float px){
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float dp = px / (metrics.densityDpi / 160f);
+        return Math.round(dp);
+    }
+
+    public static int convertDpToPixel(float dp){
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return Math.round(px);
     }
 
 }

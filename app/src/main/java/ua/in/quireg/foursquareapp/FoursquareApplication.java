@@ -10,6 +10,7 @@ import ua.in.quireg.foursquareapp.di.BaseModule;
 import ua.in.quireg.foursquareapp.di.DaggerAppComponent;
 import ua.in.quireg.foursquareapp.di.NavigationModule;
 import ua.in.quireg.foursquareapp.di.OkHttpModule;
+import ua.in.quireg.foursquareapp.di.RepositoryModule;
 import ua.in.quireg.foursquareapp.di.RetrofitModule;
 
 /**
@@ -48,6 +49,7 @@ public class FoursquareApplication extends Application {
                 .navigationModule(new NavigationModule())
                 .okHttpModule(new OkHttpModule())
                 .retrofitModule(new RetrofitModule())
+                .repositoryModule(new RepositoryModule())
                 .build();
     }
 }

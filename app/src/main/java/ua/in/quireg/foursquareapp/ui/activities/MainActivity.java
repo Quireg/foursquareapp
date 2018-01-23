@@ -1,13 +1,11 @@
 package ua.in.quireg.foursquareapp.ui.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.terrakok.cicerone.NavigatorHolder;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
@@ -16,12 +14,10 @@ import ua.in.quireg.foursquareapp.mvp.routing.MainNavigator;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.ui.fragments.PlacesListFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     @Inject NavigatorHolder mNavigatorHolder;
     @Inject MainRouter mMainRouter;
-
-    @BindView(R.id.toolbar) protected Toolbar mToolbar;
 
     private Toast mToast;
 
@@ -37,26 +33,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void navigatePlacesList() {
-            getSupportFragmentManager()
+            getFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, new PlacesListFragment())
                     .commit();
 
-            getSupportActionBar().setLogo(R.drawable.ic_logo);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_main);
 
         FoursquareApplication.getAppComponent().inject(this);
 
-        setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
 
         super.onCreate(savedInstanceState);
     }
@@ -68,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
+    protected void onResume() {
+        super.onResume();
         mNavigatorHolder.setNavigator(mNavigator);
     }
 
