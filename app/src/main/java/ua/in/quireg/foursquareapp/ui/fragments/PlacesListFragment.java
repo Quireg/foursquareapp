@@ -10,19 +10,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
+import android.widget.SearchView;
 import android.widget.Toolbar;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
@@ -40,7 +35,9 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @BindView(R.id.places_list) protected RecyclerView mRecyclerView;
     @BindView(R.id.loadingView) protected View mLoadingView;
     @BindView(R.id.errorView) protected View mErrorView;
-    @BindView(R.id.toolbar_) protected Toolbar mToolbar;
+//    @BindView(R.id.toolbar_) Toolbar mToolbar;
+
+    private SearchView mSearchView;
 
     @InjectPresenter(type = PresenterType.WEAK)
     PlacesListPresenter mPlacesListPresenter;
@@ -61,7 +58,18 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.search_menu, menu);
 
-        //SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
+//        mSearchView.setOnFocusChangeListener((view, b) -> {
+//            if(view.getId() == R.id.search && !view.hasFocus()) {
+//
+//                InputMethodManager imm =  (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                if (imm != null) {
+//                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//                }
+//
+//            }
+//        });
+//        mSearchView.setIconified(false);
 
     }
 
@@ -69,12 +77,14 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh: {
-                mPlacesListPresenter.refreshLast();
+                mPlacesListPresenter.refresh();
                 return true;
             }
         }
         return false;
     }
+
+
 
     @Nullable
     @Override
@@ -83,25 +93,22 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         View view = inflater.inflate(R.layout.fragment_places_screen, container, false);
 
         ButterKnife.bind(this, view);
-
-        getActivity().setActionBar(mToolbar);
-        getActivity().getActionBar().setLogo(R.drawable.appbar_logo_extended_margin);
-        getActivity().getActionBar().setDisplayShowHomeEnabled(true);
-
+//        getActivity().setActionBar(mToolbar);
+//        getActivity().getActionBar().setLogo(R.drawable.appbar_logo_extended_margin);
+//        getActivity().getActionBar().setDisplayShowHomeEnabled(true);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));
 
-        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-        animator.setInterpolator(new OvershootInterpolator());
-
-        mRecyclerView.setItemAnimator(animator);
+//        SlideInLeftAnimator animator = new SlideInLeftAnimator();
+//        animator.setInterpolator(new OvershootInterpolator());
+//
+//        mRecyclerView.setItemAnimator(animator);
 
 //        mRecyclerView.getItemAnimator().setAddDuration(10000);
 //        mRecyclerView.getItemAnimator().setRemoveDuration(10000);
 //        mRecyclerView.getItemAnimator().setMoveDuration(10000);
 //        mRecyclerView.getItemAnimator().setChangeDuration(10000);
-
 
         mRecyclerView.setAdapter(mPlacesListRecyclerViewAdapter);
 
@@ -109,24 +116,34 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     }
 
     @Override
-    public void showLoading() {
-        mRecyclerView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.GONE);
+    public void showLoadingView() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
         mLoadingView.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void showPlaces(List<PlaceEntity> places, String title) {
-        mLoadingView.setVisibility(View.GONE);
-        mErrorView.setVisibility(View.GONE);
+    public void clearList() {
+        mPlacesListRecyclerViewAdapter.clearList();
+    }
+
+    @Override
+    public void updateListTitle(String title) {
+        mPlacesListRecyclerViewAdapter.updateListTitle(title);
+    }
+
+    @Override
+    public void showPlace(PlaceEntity place) {
+        mLoadingView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
-        mPlacesListRecyclerViewAdapter.updateList(places, title);
+        mPlacesListRecyclerViewAdapter.addToList(place);
     }
 
     @Override
     public void showErrorView(String text) {
-        mLoadingView.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.GONE);
+        mLoadingView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorView.setVisibility(View.VISIBLE);
     }
 }

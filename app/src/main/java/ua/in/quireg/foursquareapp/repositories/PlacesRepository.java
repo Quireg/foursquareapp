@@ -15,6 +15,6 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public interface PlacesRepository {
 
-    Observable<List<Pair<Venue, VenueExtended>>> getPlaces();
+    Observable<Pair<Venue, VenueExtended>> getPlaces();
 
 }

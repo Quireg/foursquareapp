@@ -5,6 +5,7 @@ import android.support.v4.util.Pair;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
@@ -24,20 +25,19 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Observable<List<Pair<Venue, VenueExtended>>> getPlaces() {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces() {
 
         FoursquareApi foursquareApi = mRetrofit.create(FoursquareApi.class);
 
         return foursquareApi.executeSearchNearbyPlacesQuery("50.450100,30.523400", "browse", "200", "50")
                 .flatMap(respond ->
                         Observable.fromIterable(respond.getResponse().getVenues())
+                                .subscribeOn(Schedulers.single())
                                 .flatMap(venue ->
                                         foursquareApi
                                                 .executeObtainPlaceInfo(venue.getId())
                                                 .map(singleVenueRespond -> singleVenueRespond.getResponse().getVenue())
                                                 .map(venueExtended -> new Pair<>(venue, venueExtended)))
-                                .toList()
-                                .toObservable()
                 );
     }
 }

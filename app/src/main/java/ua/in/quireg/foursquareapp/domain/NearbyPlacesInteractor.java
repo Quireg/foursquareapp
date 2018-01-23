@@ -1,10 +1,6 @@
 package ua.in.quireg.foursquareapp.domain;
 
-import android.net.Uri;
 import android.support.v4.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,7 +8,6 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
-import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
@@ -25,27 +20,17 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public class NearbyPlacesInteractor {
 
-
     @Inject @Named("release") PlacesRepository mPlacesRepository;
 
     public NearbyPlacesInteractor() {
         FoursquareApplication.getAppComponent().inject(this);
     }
 
-    public Observable<List<PlaceEntity>> getNearbyPlaces() {
+    public Observable<PlaceEntity> getNearbyPlaces() {
 
         return mPlacesRepository.getPlaces()
                 .subscribeOn(Schedulers.io())
-                .map(NearbyPlacesInteractor::mapEntitiesList);
-    }
-
-    private static List<PlaceEntity> mapEntitiesList(List<Pair<Venue, VenueExtended>> venues) {
-        ArrayList<PlaceEntity> placeEntityArrayList = new ArrayList<>();
-
-        for (Pair<Venue, VenueExtended> v : venues) {
-            placeEntityArrayList.add(mapEntities(v));
-        }
-        return placeEntityArrayList;
+                .map(NearbyPlacesInteractor::mapEntities);
     }
 
     private static PlaceEntity mapEntities(Pair<Venue, VenueExtended> pair) {

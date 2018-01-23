@@ -126,16 +126,23 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         return TYPE_ITEM;
     }
 
-    public void updateList(List<PlaceEntity> list, String title) {
+    public void clearList() {
         int itemCount = getItemCount();
         if (itemCount > 0) {
             mItemsList.clear();
             notifyItemRangeRemoved(0, itemCount);
         }
-        mListTitle = title;
-        mItemsList.addAll(list);
-        notifyItemRangeInserted(0, getItemCount());
+    }
 
+    public void updateListTitle(String title) {
+        mListTitle = title;
+        notifyItemInserted(0);
+
+    }
+
+    public void addToList(PlaceEntity entity) {
+        mItemsList.add(entity);
+        notifyItemInserted(getItemCount());
     }
 
     class PlaceEntityViewHolder extends RecyclerView.ViewHolder {

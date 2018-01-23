@@ -33,7 +33,7 @@ public class PlacesRepositoryStubImpl implements PlacesRepository {
     }
 
     @Override
-    public Observable<List<Pair<Venue, VenueExtended>>> getPlaces() {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces() {
         ArrayList<Pair<Venue, VenueExtended>> arrayList = new ArrayList<>();
 
         try {
@@ -51,6 +51,6 @@ public class PlacesRepositoryStubImpl implements PlacesRepository {
             e.printStackTrace();
         }
 
-        return Observable.just(arrayList);
+        return Observable.fromIterable(arrayList);
     }
 }

@@ -3,9 +3,11 @@ package ua.in.quireg.foursquareapp.ui.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.terrakok.cicerone.NavigatorHolder;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
@@ -18,6 +20,7 @@ public class MainActivity extends Activity {
 
     @Inject NavigatorHolder mNavigatorHolder;
     @Inject MainRouter mMainRouter;
+//    @BindView(R.id.toolbar) Toolbar mToolbar;
 
     private Toast mToast;
 
@@ -48,6 +51,8 @@ public class MainActivity extends Activity {
         FoursquareApplication.getAppComponent().inject(this);
 
         ButterKnife.bind(this);
+
+//        setActionBar(mToolbar);
 
         super.onCreate(savedInstanceState);
     }

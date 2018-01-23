@@ -34,7 +34,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         //kickOffGetNearbyPlacesQuery();
-        getViewState().showErrorView("Error!");
+//        getViewState().showErrorView("Error!");
     }
 
     @Override
@@ -43,14 +43,14 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
         compositeDisposable.clear();
     }
 
-    public void refreshLast() {
+    public void refresh() {
         kickOffGetNearbyPlacesQuery();
     }
 
     private void kickOffGetNearbyPlacesQuery() {
-        //getViewState().showLoading();
-
-        final String nearbyPlacesQueryTitle = mResourceManager.getResources().getString(R.string.default_list_title);
+        getViewState().showLoadingView();
+        getViewState().clearList();
+        getViewState().updateListTitle(mResourceManager.getResources().getString(R.string.default_list_title));
 
         compositeDisposable.clear();
         compositeDisposable.add(
@@ -58,8 +58,8 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                         .getNearbyPlaces()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                placesList -> {
-                                    getViewState().showPlaces(placesList, nearbyPlacesQueryTitle);
+                                place -> {
+                                    getViewState().showPlace(place);
                                 },
                                 e -> {
                                     Timber.e(e);

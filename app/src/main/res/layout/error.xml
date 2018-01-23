@@ -9,14 +9,14 @@
     android:paddingRight="12dp"
     android:paddingBottom="12dp"
     android:paddingTop="44dp"
+    android:background="#80000000"
     tools:ignore="ContentDescription, RtlSymmetry">
 
     <ImageView
         android:id="@+id/error_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="8dp"
-        android:src="@android:drawable/ic_dialog_alert" />
+        android:layout_margin="8dp"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,9 +28,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="4dp"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="?android:textColorSecondary"
-            tools:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
             tools:text="Switch subscribes to an Observable that emits Observables. \
             Each time it observes one of these emitted Observables,
              the Observable returned by Switch unsubscribes from the previously-emitted Observable begins emitting items from the latest Observable.

@@ -13,9 +13,13 @@ import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 
 public interface PlacesListView extends MvpView {
 
-    void showLoading();
+    void showLoadingView();
 
-    void showPlaces(List<PlaceEntity> places, String title);
+    void clearList();
+
+    void updateListTitle(String title);
+
+    void showPlace(PlaceEntity places);
 
     void showErrorView(String text);
 }
