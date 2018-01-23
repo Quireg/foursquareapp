@@ -8,7 +8,7 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
-import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
+import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
@@ -29,7 +29,6 @@ public class NearbyPlacesInteractor {
     public Observable<PlaceEntity> getNearbyPlaces() {
 
         return mPlacesRepository.getPlaces()
-                .subscribeOn(Schedulers.io())
                 .map(NearbyPlacesInteractor::mapEntities);
     }
 

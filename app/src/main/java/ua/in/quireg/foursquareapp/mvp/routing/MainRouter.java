@@ -6,7 +6,9 @@ import ru.terrakok.cicerone.BaseRouter;
 import ru.terrakok.cicerone.commands.Command;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateBackwards;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.ShowError;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 3:39 PM.
@@ -23,16 +25,24 @@ public final class MainRouter extends BaseRouter {
         executeCommand(new NavigateBackwards());
     }
 
-    public void navigatePlacesListScreen() {
+    public void placesListScreen() {
         executeCommand(new NavigatePlacesListScreen());
     }
 
-    public void navigateFilterScreen() {
+    public void filterScreen() {
         executeCommand(new NavigateBackwards());
     }
 
-    public void navigatePlaceScreen() {
+    public void placeExtendedScreen() {
         executeCommand(new NavigateBackwards());
+    }
+
+    public void requestPermissions() {
+        executeCommand(new RequestPermissions());
+    }
+
+    public void showErrorDialog(String text) {
+        executeCommand(new ShowError(text));
     }
 
     @Override

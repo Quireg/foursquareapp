@@ -10,8 +10,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toolbar;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
@@ -19,7 +20,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ua.in.quireg.foursquareapp.R;
-import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
+import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
@@ -33,11 +34,9 @@ import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
 public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
     @BindView(R.id.places_list) protected RecyclerView mRecyclerView;
-    @BindView(R.id.loadingView) protected View mLoadingView;
-    @BindView(R.id.errorView) protected View mErrorView;
-//    @BindView(R.id.toolbar_) Toolbar mToolbar;
-
-    private SearchView mSearchView;
+    @BindView(R.id.header_textview) protected TextView mHeaderView;
+    @BindView(R.id.shadowline) protected View mShadowline;
+    @BindView(R.id.progress_bar) protected ProgressBar mProgressBar;
 
     @InjectPresenter(type = PresenterType.WEAK)
     PlacesListPresenter mPlacesListPresenter;
@@ -50,7 +49,6 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         setHasOptionsMenu(true);
 
         mPlacesListRecyclerViewAdapter = new PlacesListRecyclerViewAdapter(getActivity());
-
     }
 
     @Override
@@ -58,18 +56,7 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.search_menu, menu);
 
-        mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
-//        mSearchView.setOnFocusChangeListener((view, b) -> {
-//            if(view.getId() == R.id.search && !view.hasFocus()) {
-//
-//                InputMethodManager imm =  (InputMethodManager) getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                if (imm != null) {
-//                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//                }
-//
-//            }
-//        });
-//        mSearchView.setIconified(false);
+        SearchView mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
 
     }
 
@@ -84,66 +71,46 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         return false;
     }
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_places_screen, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
 
         ButterKnife.bind(this, view);
-//        getActivity().setActionBar(mToolbar);
-//        getActivity().getActionBar().setLogo(R.drawable.appbar_logo_extended_margin);
-//        getActivity().getActionBar().setDisplayShowHomeEnabled(true);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));
-
-//        SlideInLeftAnimator animator = new SlideInLeftAnimator();
-//        animator.setInterpolator(new OvershootInterpolator());
-//
-//        mRecyclerView.setItemAnimator(animator);
-
-//        mRecyclerView.getItemAnimator().setAddDuration(10000);
-//        mRecyclerView.getItemAnimator().setRemoveDuration(10000);
-//        mRecyclerView.getItemAnimator().setMoveDuration(10000);
-//        mRecyclerView.getItemAnimator().setChangeDuration(10000);
-
         mRecyclerView.setAdapter(mPlacesListRecyclerViewAdapter);
 
         return view;
     }
 
     @Override
-    public void showLoadingView() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorView.setVisibility(View.INVISIBLE);
-        mLoadingView.setVisibility(View.VISIBLE);
+    public void setListTitle(String title) {
+        mShadowline.setVisibility(View.VISIBLE);
+        mHeaderView.setText(title);
     }
 
     @Override
-    public void clearList() {
-        mPlacesListRecyclerViewAdapter.clearList();
-    }
-
-    @Override
-    public void updateListTitle(String title) {
-        mPlacesListRecyclerViewAdapter.updateListTitle(title);
-    }
-
-    @Override
-    public void showPlace(PlaceEntity place) {
-        mLoadingView.setVisibility(View.INVISIBLE);
-        mErrorView.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
+    public void addToList(PlaceEntity place) {
         mPlacesListRecyclerViewAdapter.addToList(place);
     }
 
     @Override
-    public void showErrorView(String text) {
-        mLoadingView.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorView.setVisibility(View.VISIBLE);
+    public void clear() {
+        mPlacesListRecyclerViewAdapter.clearList();
+        mShadowline.setVisibility(View.INVISIBLE);
+
     }
+
+    @Override
+    public void toggleLoadingView(boolean visible) {
+        if (visible) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
 }

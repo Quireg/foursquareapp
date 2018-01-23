@@ -10,8 +10,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
-import ua.in.quireg.foursquareapp.common.ResourceManager;
+import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.domain.NearbyPlacesInteractor;
+import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 
 /**
@@ -19,11 +20,13 @@ import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
  * foursquareapp
  */
 
+@SuppressWarnings("WeakerAccess")
 @InjectViewState
 public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    @Inject ResourceManager mResourceManager;
+    @Inject MainRouter mRouter;
+    @Inject FoursquareApplication mFoursquareApplication;
+    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     public PlacesListPresenter() {
         super();
@@ -33,40 +36,54 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        //kickOffGetNearbyPlacesQuery();
-//        getViewState().showErrorView("Error!");
+
+        if (!checkPermissions()) {
+            mRouter.requestPermissions();
+            return;
+        }
+        fetchNearbyPlaces();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        compositeDisposable.clear();
+        mCompositeDisposable.clear();
     }
 
     public void refresh() {
-        kickOffGetNearbyPlacesQuery();
+        fetchNearbyPlaces();
     }
 
-    private void kickOffGetNearbyPlacesQuery() {
-        getViewState().showLoadingView();
-        getViewState().clearList();
-        getViewState().updateListTitle(mResourceManager.getResources().getString(R.string.default_list_title));
+    private void fetchNearbyPlaces() {
+        getViewState().clear();
+        getViewState().toggleLoadingView(true);
 
-        compositeDisposable.clear();
-        compositeDisposable.add(
+        mCompositeDisposable.clear();
+
+        mCompositeDisposable.add(
                 new NearbyPlacesInteractor()
                         .getNearbyPlaces()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                place -> {
-                                    getViewState().showPlace(place);
+                                next -> {
+                                    getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
+                                    getViewState().addToList(next);
                                 },
-                                e -> {
-                                    Timber.e(e);
-                                    getViewState().showErrorView(e.getLocalizedMessage());
+                                error -> {
+                                    Timber.e(error);
+                                    getViewState().toggleLoadingView(false);
+                                    mRouter.showErrorDialog(error.getLocalizedMessage());
+                                },
+                                () -> {
+                                    //onComplete
+                                    getViewState().toggleLoadingView(false);
                                 }
                         )
         );
+    }
+
+    private boolean checkPermissions() {
+        return PermissionManager.verifyPermissions(mFoursquareApplication.getApplicationContext());
     }
 
 }

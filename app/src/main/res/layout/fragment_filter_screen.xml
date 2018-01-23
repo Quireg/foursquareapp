@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText">
+
+    <TextView
+        android:id="@+id/sortby_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sort By"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/red"
+        app:layout_constraintTop_toBottomOf="@id/sortby_title" />
+
+    <LinearLayout
+        android:id="@+id/sortby_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@id/divider1">
+
+        <RadioButton
+            android:id="@+id/relevance_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Relevance" />
+
+        <RadioButton
+            android:id="@+id/distance_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Distance" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/filterby_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter By"
+        app:layout_constraintTop_toBottomOf="@id/sortby_button_layout"/>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/red"
+        app:layout_constraintTop_toBottomOf="@id/filterby_title" />
+
+    <LinearLayout
+        android:id="@+id/filterby_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        app:layout_constraintTop_toBottomOf="@id/divider2">
+
+        <Button
+            android:id="@+id/price_1_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$" />
+
+        <Button
+            android:id="@+id/price_2_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$$" />
+
+        <Button
+            android:id="@+id/price_3_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$$$" />
+
+        <Button
+            android:id="@+id/price_4_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="$$$$" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/searchhere_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search here"
+        app:layout_constraintTop_toBottomOf="@id/filterby_button_layout"/>
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/red"
+        app:layout_constraintTop_toBottomOf="@id/searchhere_title" />
+
+    <FrameLayout
+        android:id="@+id/searchhere_text_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/divider3">
+
+        <EditText
+            android:id="@+id/searchhere_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:clickable="false"
+            android:hint="@string/calc_txt_Prise"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textColor="@color/gray"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            tools:text="Peremohy Ave 32, you bastard" />
+
+        <Button
+            android:id="@+id/calc_clear_txt_Prise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/delete" />
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/select_location_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Place And Radius"
+        app:layout_constraintTop_toBottomOf="@id/searchhere_text_layout" />
+
+
+</android.support.constraint.ConstraintLayout>

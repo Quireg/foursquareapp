@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_height="36dp"
+        android:layout_width="match_parent"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/header_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textStyle="bold"
+            android:layout_gravity="center_vertical"
+            tools:text="@string/default_list_title"
+            />
+        <View
+            android:id="@+id/shadowline"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/header_textview"
+            android:background="@drawable/shadowline"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/places_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header_layout"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/places_list_item" />
+
+    <ProgressBar
+        style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
+        android:id="@+id/progress_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-8dp"
+        android:layout_marginTop="-6dp"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+</RelativeLayout>
+
+
+
+

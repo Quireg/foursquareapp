@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ua.in.quireg.foursquareapp.R;
-import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
+import ua.in.quireg.foursquareapp.models.PlaceEntity;
 
 /**
  * Created by Arcturus Mengsk on 1/19/2018, 12:25 AM.
@@ -28,10 +28,10 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     private static final int TYPE_ITEM = 1;
 
     private Context mContext;
-    private String mListTitle;
     private List<PlaceEntity> mItemsList = new LinkedList<>();
 
-    private static final int HEADERS_COUNT = 1;
+    //Header is disabled for now. Using different implementation
+    private static final int HEADERS_COUNT = 0;
 
     public PlacesListRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -63,7 +63,7 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         position = position - HEADERS_COUNT;
 
         if (holder instanceof ListHeaderViewHolder) {
-            ((ListHeaderViewHolder) holder).title.setText(mListTitle);
+            ((ListHeaderViewHolder) holder).title.setText("");
         }
 
         if (holder instanceof PlaceEntityViewHolder) {
@@ -121,7 +121,7 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return TYPE_HEADER;
+        //if (position == 0) return TYPE_HEADER;
 
         return TYPE_ITEM;
     }
@@ -134,10 +134,8 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         }
     }
 
-    public void updateListTitle(String title) {
-        mListTitle = title;
+    public void updateListHeader(String title) {
         notifyItemInserted(0);
-
     }
 
     public void addToList(PlaceEntity entity) {

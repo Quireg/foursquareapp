@@ -1,4 +1,4 @@
-package ua.in.quireg.foursquareapp.mvp.models.presentation;
+package ua.in.quireg.foursquareapp.models;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;

@@ -1,17 +1,19 @@
 package ua.in.quireg.foursquareapp.ui.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import ru.terrakok.cicerone.NavigatorHolder;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
+import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.mvp.routing.MainNavigator;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.ui.fragments.PlacesListFragment;
@@ -20,7 +22,6 @@ public class MainActivity extends Activity {
 
     @Inject NavigatorHolder mNavigatorHolder;
     @Inject MainRouter mMainRouter;
-//    @BindView(R.id.toolbar) Toolbar mToolbar;
 
     private Toast mToast;
 
@@ -42,17 +43,37 @@ public class MainActivity extends Activity {
                     .commit();
 
         }
+
+        @Override
+        public void requestPermissions() {
+            PermissionManager.requestPermissions(MainActivity.this);
+        }
+
+        @Override
+        public void showError(String errorText) {
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(MainActivity.this);
+
+            builder.setTitle("Oh! Error!")
+                    .setMessage(errorText)
+                    .setPositiveButton(R.string.error_copy_button, (dialog, which) -> {
+
+                        ClipboardManager clipboard = (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(ClipData.newPlainText("Error", errorText));
+                            mMainRouter.showSystemMessage(R.string.error_copied_text);
+                        }
+                    })
+                    .setIcon(R.drawable.sad_cloud)
+                    .show();
+        }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_main);
-
         FoursquareApplication.getAppComponent().inject(this);
 
-        ButterKnife.bind(this);
-
-//        setActionBar(mToolbar);
+        setContentView(R.layout.activity_main);
 
         super.onCreate(savedInstanceState);
     }
@@ -60,7 +81,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        mMainRouter.navigatePlacesListScreen();
+        mMainRouter.placesListScreen();
     }
 
     @Override

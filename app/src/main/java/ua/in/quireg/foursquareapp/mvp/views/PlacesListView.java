@@ -2,9 +2,7 @@ package ua.in.quireg.foursquareapp.mvp.views;
 
 import com.arellomobile.mvp.MvpView;
 
-import java.util.List;
-
-import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
+import ua.in.quireg.foursquareapp.models.PlaceEntity;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 4:26 PM.
@@ -13,13 +11,12 @@ import ua.in.quireg.foursquareapp.mvp.models.presentation.PlaceEntity;
 
 public interface PlacesListView extends MvpView {
 
-    void showLoadingView();
+    void setListTitle(String title);
 
-    void clearList();
+    void addToList(PlaceEntity place);
 
-    void updateListTitle(String title);
+    void clear();
 
-    void showPlace(PlaceEntity places);
+    void toggleLoadingView(boolean visible);
 
-    void showErrorView(String text);
 }

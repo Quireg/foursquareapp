@@ -1,27 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
-    android:paddingBottom="12dp"
-    android:paddingTop="44dp"
-    android:background="#80000000"
-    tools:ignore="ContentDescription, RtlSymmetry">
+    android:layout_height="match_parent"
+    android:background="#9A000000"
+    android:padding="12dp"
+    tools:ignore="ContentDescription, RtlSymmetry, HardcodedText, RtlHardcoded, UseCompoundDrawables">
 
-    <ImageView
-        android:id="@+id/error_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="8dp"/>
-
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="52dp">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/error_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/sad_cloud" />
+
+        <TextView
+            android:id="@+id/error_title"
+            android:paddingLeft="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:text="Oh! Error!" />
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/error_text_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header_layout"
+        android:layout_above="@id/button_layout">
 
         <TextView
             android:id="@+id/error_text"
@@ -34,8 +54,38 @@
                Note that it will unsubscribe from the previously-emitted Observable when a new Observable is emitted  from the source Observable,
                 not when the new Observable emits an item.
              This means that items emitted by the previous Observable between the time the subsequent Observable is emitted and the time that subsequent
-                Observable itself begins emitting items will be dropped (as with the yellow circle in the diagram above)."
-            />
+                Observable itself begins emitting items will be dropped (as with the yellow circle in the diagram above)." />
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/button_copy_error"
+            android:padding="8dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/error_copy_button" />
+
+        <Button
+            android:id="@+id/button_close_error"
+            android:padding="8dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/error_ok_button" />
+
+    </LinearLayout>
+
+
+
+
 </RelativeLayout>

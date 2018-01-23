@@ -11,9 +11,9 @@
         android:id="@+id/icon_container"
         android:layout_width="@dimen/list_icon_width_height"
         android:layout_height="@dimen/list_icon_width_height"
-        android:padding="4dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:padding="4dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/places_list_image"
@@ -26,11 +26,11 @@
     <LinearLayout
         android:id="@+id/text_layout"
         android:layout_width="0dp"
-        android:padding="4dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/icon_container"
         android:layout_toLeftOf="@id/places_list_rating"
+        android:layout_toRightOf="@id/icon_container"
         android:orientation="vertical"
+        android:padding="4dp"
         android:weightSum="7">
 
         <TextView
@@ -41,6 +41,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:textSize="@dimen/msg_text_primary"
+            android:textStyle="bold"
             tools:text="Central Park" />
 
         <TextView
@@ -61,10 +62,9 @@
             android:ellipsize="end"
             android:lines="2"
             android:textSize="@dimen/msg_text_secondary"
-            tools:text="16m, 59th St to 110th St" />
+            tools:text="16m steps to 59th St to 110th St" />
 
     </LinearLayout>
-
 
     <TextView
         android:id="@+id/places_list_rating"
@@ -72,7 +72,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:padding="4dp"
+        android:background="@drawable/rating_background"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:textStyle="bold"
         tools:text="^_^" />
 
