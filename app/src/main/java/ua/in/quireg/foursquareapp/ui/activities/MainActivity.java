@@ -16,6 +16,7 @@ import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.mvp.routing.MainNavigator;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
+import ua.in.quireg.foursquareapp.ui.fragments.FilterFragment;
 import ua.in.quireg.foursquareapp.ui.fragments.PlacesListFragment;
 
 public class MainActivity extends Activity {
@@ -66,6 +67,15 @@ public class MainActivity extends Activity {
                     })
                     .setIcon(R.drawable.sad_cloud)
                     .show();
+        }
+
+        @Override
+        public void navigateFilterScreen() {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new FilterFragment())
+                    .addToBackStack(null)
+                    .commit();
         }
     };
 

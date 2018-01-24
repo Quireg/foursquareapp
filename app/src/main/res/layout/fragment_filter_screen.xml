@@ -24,6 +24,7 @@
         app:layout_constraintTop_toBottomOf="@id/sortby_title" />
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:id="@+id/sortby_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,14 +32,16 @@
         android:weightSum="2"
         app:layout_constraintTop_toBottomOf="@id/divider1">
 
-        <RadioButton
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/relevance_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Relevance" />
 
-        <RadioButton
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/distance_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -62,6 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/filterby_title" />
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:id="@+id/filterby_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,6 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/divider2">
 
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/price_1_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -77,6 +82,7 @@
             android:text="$" />
 
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/price_2_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,6 +90,7 @@
             android:text="$$" />
 
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/price_3_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,6 +98,7 @@
             android:text="$$$" />
 
         <Button
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/price_4_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -123,28 +131,25 @@
             android:id="@+id/searchhere_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:clickable="false"
-            android:hint="@string/calc_txt_Prise"
+            android:hint="hint hint"
             android:inputType="numberDecimal"
             android:singleLine="true"
-            android:textColor="@color/gray"
-            android:textSize="25sp"
-            android:textStyle="bold"
+            android:ellipsize="end"
             tools:text="Peremohy Ave 32, you bastard" />
 
-        <Button
-            android:id="@+id/calc_clear_txt_Prise"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/clear_custom_location_button"
+            android:scaleType="fitXY"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/delete" />
+            android:src="@drawable/delete" />
 
     </FrameLayout>
 
     <Button
-        android:id="@+id/select_location_button"
+        android:id="@+id/select_custom_location_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select Place And Radius"

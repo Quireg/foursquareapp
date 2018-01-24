@@ -2,10 +2,12 @@
     <string name="app_name">4 Square</string>
     <string name="menu_search_title">Search</string>
     <string name="menu_refresh_title">Refresh</string>
+    <string name="menu_filter_title">Filter</string>
     <string name="menu_reset_title">Reset</string>
     <string name="error_ok_button">Okay</string>
     <string name="error_copy_button">Copy to clipboard &amp; close</string>
     <string name="error_copied_text">Copied to clipboard</string>
+    <string name="error_permission_text">Location permission required</string>
     <string name="default_list_title">Showing some places around. Use search for more.</string>
     <string name="loading">Loading…</string>
 </resources>

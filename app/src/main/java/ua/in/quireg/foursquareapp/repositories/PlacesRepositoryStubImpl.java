@@ -33,7 +33,7 @@ public class PlacesRepositoryStubImpl implements PlacesRepository {
     }
 
     @Override
-    public Observable<Pair<Venue, VenueExtended>> getPlaces() {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String radius, String limit) {
         ArrayList<Pair<Venue, VenueExtended>> arrayList = new ArrayList<>();
 
         try {

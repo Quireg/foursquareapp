@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ua.in.quireg.foursquareapp.FoursquareApplication;
+
 /**
  * Created by Arcturus Mengsk on 1/22/2018, 11:30 PM.
  * foursquareapp
@@ -13,18 +15,21 @@ import java.io.InputStream;
 
 public class ResourceManager {
 
-    private Context mContext;
+    private FoursquareApplication mApplication;
 
-    public ResourceManager(Context context) {
-        mContext = context;
+    public ResourceManager(FoursquareApplication application) {
+        mApplication = application;
     }
 
     public InputStream getFileInputStreamFromAssets(String name) throws IOException {
-        return mContext.getAssets().open(name);
+        return mApplication.getResources().getAssets().open(name);
     }
 
     public Resources getResources() {
-        return mContext.getResources();
+        return mApplication.getResources();
     }
+
+
+
 
 }

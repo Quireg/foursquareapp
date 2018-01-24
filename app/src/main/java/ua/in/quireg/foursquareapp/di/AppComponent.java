@@ -3,6 +3,7 @@ package ua.in.quireg.foursquareapp.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.domain.NearbyPlacesInteractor;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;

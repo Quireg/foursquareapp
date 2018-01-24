@@ -54,6 +54,7 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         inflater.inflate(R.menu.search_menu, menu);
 
         SearchView mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
@@ -64,7 +65,11 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh: {
-                mPlacesListPresenter.refresh();
+                mPlacesListPresenter.startNegotiation();
+                return true;
+            }
+            case R.id.filter: {
+                mPlacesListPresenter.openFilterScreen();
                 return true;
             }
         }

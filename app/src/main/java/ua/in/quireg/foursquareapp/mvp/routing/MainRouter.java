@@ -5,6 +5,7 @@ import android.support.annotation.StringRes;
 import ru.terrakok.cicerone.BaseRouter;
 import ru.terrakok.cicerone.commands.Command;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateBackwards;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
@@ -30,7 +31,7 @@ public final class MainRouter extends BaseRouter {
     }
 
     public void filterScreen() {
-        executeCommand(new NavigateBackwards());
+        executeCommand(new NavigateFilterScreen());
     }
 
     public void placeExtendedScreen() {

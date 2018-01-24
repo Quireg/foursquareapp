@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
@@ -26,9 +25,9 @@ public class NearbyPlacesInteractor {
         FoursquareApplication.getAppComponent().inject(this);
     }
 
-    public Observable<PlaceEntity> getNearbyPlaces() {
+    public Observable<PlaceEntity> getNearbyPlaces(String latLonCommaSeparated, String radius, String limit) {
 
-        return mPlacesRepository.getPlaces()
+        return mPlacesRepository.getPlaces(latLonCommaSeparated, radius, limit)
                 .map(NearbyPlacesInteractor::mapEntities);
     }
 
@@ -39,7 +38,7 @@ public class NearbyPlacesInteractor {
         Venue venue = pair.first;
         VenueExtended venueExtended = pair.second;
 
-        if(venue == null || venueExtended == null) {
+        if (venue == null || venueExtended == null) {
             throw new RuntimeException("received null response from api");
         }
 

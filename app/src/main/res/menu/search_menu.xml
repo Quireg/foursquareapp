@@ -8,6 +8,11 @@
         android:showAsAction="ifRoom|collapseActionView"
         android:actionViewClass="android.widget.SearchView" />
     <item
+        android:id="@+id/filter"
+        android:title="@string/menu_filter_title"
+        android:icon="@drawable/ic_filter"
+        android:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/refresh"
         android:title="@string/menu_refresh_title"
         android:showAsAction="never"/>

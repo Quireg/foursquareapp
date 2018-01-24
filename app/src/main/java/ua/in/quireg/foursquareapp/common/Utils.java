@@ -48,4 +48,8 @@ public class Utils {
         return Math.round(px);
     }
 
+    public static int booleanToInt(boolean b) {
+        return b ? 1 : 0;
+    }
+
 }

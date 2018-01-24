@@ -44,8 +44,8 @@ public class BaseModule {
 
     @Provides
     @Singleton
-    ResourceManager providesResourceManager(Context context) {
-        return new ResourceManager(context);
+    ResourceManager providesResourceManager(FoursquareApplication application) {
+        return new ResourceManager(application);
     }
 
 }
