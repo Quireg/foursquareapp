@@ -23,11 +23,11 @@ public class PlacesRepositoryImpl implements PlacesRepository {
     }
 
     @Override
-    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String radius, String limit) {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String query, String radius, String limit) {
 
         FoursquareApi foursquareApi = mRetrofit.create(FoursquareApi.class);
 
-        return foursquareApi.executeSearchNearbyPlacesQuery(latLonCommaSeparated, "browse", radius, limit)
+        return foursquareApi.executeSearchNearbyPlacesQuery(latLonCommaSeparated, query, "browse", radius, limit)
                 .subscribeOn(Schedulers.io())
                 .flatMap(respond ->
                         Observable.fromIterable(respond.getResponse().getVenues())

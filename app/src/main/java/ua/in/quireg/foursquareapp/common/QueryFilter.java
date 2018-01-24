@@ -18,8 +18,6 @@ public class QueryFilter {
     private static final String SORT_TYPE_PREFS = "sort_type";
     private static final String PRICE_TIER_PREFS = "price_tier";
     private static final String RADIUS_PREFS = "radius";
-    private static final String LOC_LAT_PREFS = "loc_lat";
-    private static final String LOC_LON_PREFS = "loc_lon";
 
     private volatile int sortType;
     private volatile int priceTierFilter; //{1,2,4,8} bits
@@ -36,34 +34,30 @@ public class QueryFilter {
 
     }
 
-    public synchronized boolean saveState() {
+    private void saveState() {
         if (mSharedPreferences == null) {
             throw new UnsupportedOperationException("No shared preferences provided");
         }
 
-        return mSharedPreferences.edit()
+        mSharedPreferences.edit()
                 .putInt(SORT_TYPE_PREFS, this.getSortType())
                 .putInt(PRICE_TIER_PREFS, this.getPriceTierFilter())
                 .putString(RADIUS_PREFS, this.getSearchRadius())
-                .putLong(LOC_LAT_PREFS, Double.doubleToRawLongBits(this.getLocation().getLat()))
-                .putLong(LOC_LON_PREFS, Double.doubleToRawLongBits(this.getLocation().getLon()))
-                .commit();
+                .apply();
     }
 
-    public synchronized boolean resetState() {
+    public synchronized void resetState() {
         if (mSharedPreferences == null) {
             throw new UnsupportedOperationException("No shared preferences provided");
         }
 
         QueryFilter defaultFilter = QueryFilter.buildNew().build();
 
-        return mSharedPreferences.edit()
+        mSharedPreferences.edit()
                 .putInt(SORT_TYPE_PREFS, defaultFilter.getSortType())
                 .putInt(PRICE_TIER_PREFS, defaultFilter.getPriceTierFilter())
                 .putString(RADIUS_PREFS, defaultFilter.getSearchRadius())
-                .putLong(LOC_LAT_PREFS, Double.doubleToRawLongBits(defaultFilter.getLocation().getLat()))
-                .putLong(LOC_LON_PREFS, Double.doubleToRawLongBits(defaultFilter.getLocation().getLon()))
-                .commit();
+                .apply();
     }
 
     public int getSortType() {
@@ -72,6 +66,7 @@ public class QueryFilter {
 
     public void setSortType(int sortType) {
         this.sortType = sortType;
+        saveState();
     }
 
     public int getPriceTierFilter() {
@@ -80,6 +75,7 @@ public class QueryFilter {
 
     public void setPriceTierFilter(int priceTierFilter) {
         this.priceTierFilter = priceTierFilter;
+        saveState();
     }
 
     public String getSearchRadius() {
@@ -88,6 +84,7 @@ public class QueryFilter {
 
     public void setSearchRadius(String searchRadius) {
         this.searchRadius = searchRadius;
+        saveState();
     }
 
     public LocationEntity getLocation() {
@@ -96,6 +93,7 @@ public class QueryFilter {
 
     public void setLocation(LocationEntity location) {
         this.location = location;
+        saveState();
     }
 
     public static final class Builder {
@@ -103,7 +101,7 @@ public class QueryFilter {
         private int sortType = SORT_TYPE_RELEVANCE;
         private int priceTierFilter = 0;
         private String searchRadius = "10000";
-        private LocationEntity location = new LocationEntity(0, 0);
+        private LocationEntity location = null;
         private SharedPreferences sharedPreferences;
 
         private Builder() {
@@ -129,7 +127,7 @@ public class QueryFilter {
 
         public QueryFilter.Builder setSearchRadius(String radius) {
 
-            if (500 < Integer.valueOf(radius) && Integer.valueOf(radius) < 100000) {
+            if (Integer.valueOf(radius) > 500 && Integer.valueOf(radius) < 100000) {
                 this.searchRadius = radius;
             } else {
                 throw new UnsupportedOperationException("Between 500 and 100,000 only");
@@ -166,10 +164,7 @@ public class QueryFilter {
                 .setSortType(sharedPreferences.getInt(SORT_TYPE_PREFS, defaultQueryFilter.getSortType()))
                 .setPriceTierFilter(sharedPreferences.getInt(PRICE_TIER_PREFS, defaultQueryFilter.getPriceTierFilter()))
                 .setSearchRadius(sharedPreferences.getString(RADIUS_PREFS, defaultQueryFilter.getSearchRadius()))
-                .setLocation(new LocationEntity(
-                        Double.doubleToLongBits(sharedPreferences.getLong(LOC_LAT_PREFS, Double.doubleToLongBits(defaultQueryFilter.getLocation().getLat()))),
-                        Double.doubleToLongBits(sharedPreferences.getLong(LOC_LON_PREFS, Double.doubleToLongBits(defaultQueryFilter.getLocation().getLon())))
-                ))
+                .setLocation(null)
                 .setBackupStorage(sharedPreferences)
                 .build();
 

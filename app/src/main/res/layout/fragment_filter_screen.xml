@@ -4,14 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"
+    android:padding="8dp"
     android:orientation="vertical"
+    style="@style/AppTheme"
     tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/sortby_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         android:text="Sort By"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -20,28 +23,27 @@
         android:id="@+id/divider1"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/red"
+        android:background="@color/colorAccent"
         app:layout_constraintTop_toBottomOf="@id/sortby_title" />
 
     <LinearLayout
-        style="?android:attr/buttonBarStyle"
         android:id="@+id/sortby_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/divider1">
 
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
+        <Switch
             android:id="@+id/relevance_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Relevance" />
 
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
+        <Switch
             android:id="@+id/distance_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,13 +57,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Filter By"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/sortby_button_layout"/>
 
     <View
         android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/red"
+        android:background="@color/colorAccent"
         app:layout_constraintTop_toBottomOf="@id/filterby_title" />
 
     <LinearLayout
@@ -71,6 +75,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="4"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/divider2">
 
         <Button
@@ -112,39 +118,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search here"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/filterby_button_layout"/>
 
     <View
         android:id="@+id/divider3"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/red"
+        android:background="@color/colorAccent"
         app:layout_constraintTop_toBottomOf="@id/searchhere_title" />
 
     <FrameLayout
         android:id="@+id/searchhere_text_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/divider3">
 
-        <EditText
-            android:id="@+id/searchhere_edittext"
+        <TextView
+            android:id="@+id/current_loc_textview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:hint="hint hint"
-            android:inputType="numberDecimal"
+            android:layout_height="32dp"
             android:singleLine="true"
             android:ellipsize="end"
-            tools:text="Peremohy Ave 32, you bastard" />
+            android:textSize="22sp"
+            android:gravity="center"
+            tools:text="Peremohy Ave 32, you b*st*rd" />
 
         <ImageButton
             android:id="@+id/clear_custom_location_button"
             android:scaleType="fitXY"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="-16dp"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/delete" />
+            android:src="@drawable/delete"
+            tools:ignore="ContentDescription" />
 
     </FrameLayout>
 
@@ -153,6 +164,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select Place And Radius"
+        android:layout_margin="4dp"
+        android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/searchhere_text_layout" />
 
 

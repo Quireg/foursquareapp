@@ -1,5 +1,7 @@
 package ua.in.quireg.foursquareapp.common;
 
+import android.location.Location;
+
 import com.google.android.gms.location.LocationListener;
 
 /**
@@ -8,6 +10,8 @@ import com.google.android.gms.location.LocationListener;
  */
 
 public interface LocRepository {
+
+    Location getLastKnownLocation();
 
     void subscribeToLocUpdates(LocationListener l);
 

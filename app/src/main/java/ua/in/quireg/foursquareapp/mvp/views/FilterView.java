@@ -9,8 +9,10 @@ import com.arellomobile.mvp.MvpView;
 
 public interface FilterView extends MvpView {
 
-    void toggleRelevanceDistance(boolean relevanceTrueDistanceFalse);
+    void toggleRelevance(boolean relevance);
 
     void togglePriceTier(int tier);
+
+    void resetLocation(String text);
 
 }

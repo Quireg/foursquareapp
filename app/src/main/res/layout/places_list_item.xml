@@ -72,7 +72,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/rating_background"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingStart="6dp"

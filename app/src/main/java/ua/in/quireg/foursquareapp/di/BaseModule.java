@@ -42,10 +42,10 @@ public class BaseModule {
         return application.getSharedPreferences("prefs", Context.MODE_PRIVATE);
     }
 
-    @Provides
-    @Singleton
-    ResourceManager providesResourceManager(FoursquareApplication application) {
-        return new ResourceManager(application);
-    }
+//    @Provides
+//    @Singleton
+//    ResourceManager providesResourceManager(FoursquareApplication application) {
+//        return new ResourceManager(application);
+//    }
 
 }

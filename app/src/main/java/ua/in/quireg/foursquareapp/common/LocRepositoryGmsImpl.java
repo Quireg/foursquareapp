@@ -27,6 +27,8 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     private Vector<LocationListener> mLocationlisteners = new Vector<>();
 
+    private Location lastKnownLocation;
+
     public LocRepositoryGmsImpl(Application app) {
 
         mGoogleApiClient = new GoogleApiClient.Builder(app.getApplicationContext())
@@ -37,8 +39,13 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
     }
 
     @Override
+    public Location getLastKnownLocation() {
+        return lastKnownLocation;
+    }
+
+    @Override
     public void subscribeToLocUpdates(LocationListener l) {
-        if(mLocationlisteners.contains(l)) {
+        if (mLocationlisteners.contains(l)) {
             Timber.w("This subscribe already receiving loc updates!");
             return;
         }
@@ -55,7 +62,7 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
     public void unsubscribeFromLocUpdates(LocationListener l) {
         mLocationlisteners.remove(l);
 
-        if(mLocationlisteners.size() == 0) {
+        if (mLocationlisteners.size() == 0) {
             mGoogleApiClient.disconnect();
         }
     }
@@ -83,6 +90,8 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void onLocationChanged(Location location) {
+        lastKnownLocation = location;
+
         for (LocationListener locationListener : mLocationlisteners) {
             locationListener.onLocationChanged(location);
         }

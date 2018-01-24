@@ -19,7 +19,9 @@ import com.arellomobile.mvp.presenter.PresenterType;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import ua.in.quireg.foursquareapp.R;
+import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
@@ -59,6 +61,34 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
         SearchView mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
 
+        Observable<String> stringObservable = Observable.defer(() -> Observable.create(e -> {
+
+            mSearchView.setOnQueryTextListener(
+                    new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String s) {
+                            e.onNext(s);
+//                            e.onComplete();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String s) {
+                            e.onNext(s);
+                            return false;
+                        }
+                    });
+
+            mSearchView.setOnCloseListener(() -> {
+//                e.onComplete();
+                return false;
+            });
+
+        })
+                .cast(String.class));
+
+//                .filter(Utils::isNotNullOrEmpty)
+        mPlacesListPresenter.onSearchRequest(stringObservable);
     }
 
     @Override
@@ -82,7 +112,7 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
         View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
 
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));

@@ -6,9 +6,15 @@ package ua.in.quireg.foursquareapp.models;
  */
 
 public class LocationEntity {
+
     private double lat;
     private double lon;
     private String address;
+
+    public LocationEntity(double lat, double lon, boolean remote) {
+        this.lat = lat;
+        this.lon = lon;
+    }
 
     public LocationEntity(double lat, double lon) {
         this.lat = lat;
@@ -43,7 +49,5 @@ public class LocationEntity {
         return String.format("%s,%s", getLat(), getLon());
     }
 
-    public boolean shouldUse() {
-        return lat != 0 & lon != 0;
-    }
+
 }

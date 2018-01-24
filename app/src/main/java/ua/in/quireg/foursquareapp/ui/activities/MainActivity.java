@@ -2,6 +2,7 @@ package ua.in.quireg.foursquareapp.ui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -38,11 +39,9 @@ public class MainActivity extends Activity {
 
         @Override
         public void navigatePlacesList() {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new PlacesListFragment())
-                    .commit();
-
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container, new PlacesListFragment(), "pf");
+            ft.commit();
         }
 
         @Override
@@ -59,7 +58,7 @@ public class MainActivity extends Activity {
                     .setMessage(errorText)
                     .setPositiveButton(R.string.error_copy_button, (dialog, which) -> {
 
-                        ClipboardManager clipboard = (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
                         if (clipboard != null) {
                             clipboard.setPrimaryClip(ClipData.newPlainText("Error", errorText));
                             mMainRouter.showSystemMessage(R.string.error_copied_text);
@@ -71,20 +70,20 @@ public class MainActivity extends Activity {
 
         @Override
         public void navigateFilterScreen() {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new FilterFragment())
-                    .addToBackStack(null)
-                    .commit();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.animator.frag_enter, R.animator.frag_exit, R.animator.frag_enter, R.animator.frag_exit);
+
+            ft.replace(R.id.fragment_container, new FilterFragment(), "ff");
+            ft.addToBackStack(null);
+            ft.commit();
+
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FoursquareApplication.getAppComponent().inject(this);
-
         setContentView(R.layout.activity_main);
-
         super.onCreate(savedInstanceState);
     }
 

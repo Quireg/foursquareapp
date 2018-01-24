@@ -6,6 +6,7 @@ import ru.terrakok.cicerone.BaseRouter;
 import ru.terrakok.cicerone.commands.Command;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateBackwards;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateLocationPickerScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
@@ -22,10 +23,6 @@ public final class MainRouter extends BaseRouter {
         executeCommand(new SendShortToast(stringId));
     }
 
-    public void onBackPressed() {
-        executeCommand(new NavigateBackwards());
-    }
-
     public void placesListScreen() {
         executeCommand(new NavigatePlacesListScreen());
     }
@@ -36,6 +33,10 @@ public final class MainRouter extends BaseRouter {
 
     public void placeExtendedScreen() {
         executeCommand(new NavigateBackwards());
+    }
+
+    public void locationPickerScreen() {
+        executeCommand(new NavigateLocationPickerScreen());
     }
 
     public void requestPermissions() {

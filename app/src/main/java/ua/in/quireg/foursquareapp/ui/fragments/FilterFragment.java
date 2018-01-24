@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
@@ -18,7 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ua.in.quireg.foursquareapp.R;
-import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
 
@@ -35,8 +34,8 @@ public class FilterFragment extends MvpFragment implements FilterView {
     @BindView(R.id.price_2_button) protected Button price_2_button;
     @BindView(R.id.price_3_button) protected Button price_3_button;
     @BindView(R.id.price_4_button) protected Button price_4_button;
-    @BindView(R.id.clear_custom_location_button) protected ImageButton clear_custom_location_button;
-    @BindView(R.id.select_custom_location_button) protected Button select_custom_location_button;
+
+    @BindView(R.id.current_loc_textview) protected TextView current_loc_textview;
 
     @InjectPresenter(type = PresenterType.WEAK)
     FilterScreenPresenter mFilterScreenPresenter;
@@ -60,7 +59,7 @@ public class FilterFragment extends MvpFragment implements FilterView {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.reset: {
-                //TODO
+                mFilterScreenPresenter.resetFilter();
                 return true;
             }
         }
@@ -73,19 +72,19 @@ public class FilterFragment extends MvpFragment implements FilterView {
 
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
 
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         return view;
     }
 
     @OnClick(R.id.relevance_button)
     void setSortbyRelevance() {
-
+        mFilterScreenPresenter.onRelevanceClick();
     }
 
     @OnClick(R.id.distance_button)
     void setSortbyDistance() {
-
+        mFilterScreenPresenter.onDistanceClick();
     }
 
     @OnClick(R.id.price_1_button)
@@ -109,38 +108,74 @@ public class FilterFragment extends MvpFragment implements FilterView {
     }
 
     @Override
-    public void toggleRelevanceDistance(boolean relevanceTrueDistanceFalse) {
-        if(relevanceTrueDistanceFalse) {
-            relevance_button.setActivated(true);
-            distance_button.setActivated(false);
+    public void toggleRelevance(boolean relevance) {
+
+        if (relevance) {
+            relevance_button.setPressed(true);
+            distance_button.setPressed(false);
         } else {
-            relevance_button.setActivated(false);
-            distance_button.setActivated(true);
+            relevance_button.setPressed(false);
+            distance_button.setPressed(true);
         }
 
     }
 
     @Override
     public void togglePriceTier(int tier) {
-        char[] e = Integer.toBinaryString(tier).toCharArray();
 
-        price_1_button.setActivated(String.valueOf(e[0]).equals("1"));
-        price_2_button.setActivated(String.valueOf(e[1]).equals("1"));
-        price_3_button.setActivated(String.valueOf(e[2]).equals("1"));
-        price_4_button.setActivated(String.valueOf(e[3]).equals("1"));
+        // can't figure out better way to parse 4 bits of data =/
+
+        if (tier % 8 == 1) {
+            tier = tier - 8;
+            price_4_button.setPressed(true);
+        } else {
+            price_4_button.setPressed(false);
+        }
+
+        if (tier % 4 == 1) {
+            tier = tier - 4;
+            price_3_button.setPressed(true);
+        } else {
+            price_3_button.setPressed(false);
+        }
+
+        if (tier % 2 == 1) {
+            price_2_button.setPressed(true);
+            tier = tier - 2;
+        } else {
+            price_2_button.setPressed(false);
+        }
+        if (tier == 1) {
+            price_1_button.setPressed(true);
+        } else {
+            price_1_button.setPressed(false);
+        }
 
     }
 
-    void onPriceTierButtonClick() {
+    @Override
+    public void resetLocation(String text) {
+        current_loc_textview.setText(text);
+    }
 
-        int i = Integer.parseInt(
-                    String.format("%s%s%s%s",
-                            Utils.booleanToInt(price_1_button.isActivated()),
-                            Utils.booleanToInt(price_2_button.isActivated()),
-                            Utils.booleanToInt(price_3_button.isActivated()),
-                            Utils.booleanToInt(price_4_button.isActivated())
-                    ), 2
-        );
+    private void onPriceTierButtonClick() {
+        int i = 0;
+        if (price_1_button.isPressed()) i = +1;
+        if (price_2_button.isPressed()) i = +2;
+        if (price_3_button.isPressed()) i = +4;
+        if (price_4_button.isPressed()) i = +8;
+
+        mFilterScreenPresenter.updatePriceFilters(i);
+    }
+
+    @OnClick(R.id.select_custom_location_button)
+    void pickLocation() {
+        mFilterScreenPresenter.pickLocation();
+    }
+
+    @OnClick(R.id.clear_custom_location_button)
+    void resetLocation() {
+        mFilterScreenPresenter.resetLocation();
     }
 
 }

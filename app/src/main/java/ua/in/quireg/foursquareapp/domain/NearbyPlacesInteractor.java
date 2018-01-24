@@ -25,9 +25,9 @@ public class NearbyPlacesInteractor {
         FoursquareApplication.getAppComponent().inject(this);
     }
 
-    public Observable<PlaceEntity> getNearbyPlaces(String latLonCommaSeparated, String radius, String limit) {
+    public Observable<PlaceEntity> getNearbyPlaces(String latLonCommaSeparated, String query, String radius, String limit) {
 
-        return mPlacesRepository.getPlaces(latLonCommaSeparated, radius, limit)
+        return mPlacesRepository.getPlaces(latLonCommaSeparated, query, radius, limit)
                 .map(NearbyPlacesInteractor::mapEntities);
     }
 

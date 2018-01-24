@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.domain.NearbyPlacesInteractor;
+import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryStubImpl;
@@ -24,5 +25,6 @@ public interface AppComponent {
     void inject(PlacesRepositoryStubImpl i);
     void inject(PlacesListPresenter i);
     void inject(NearbyPlacesInteractor i);
+    void inject(FilterScreenPresenter i);
 
 }

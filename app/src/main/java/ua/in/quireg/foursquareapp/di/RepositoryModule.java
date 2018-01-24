@@ -11,7 +11,6 @@ import retrofit2.Retrofit;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.common.LocRepository;
 import ua.in.quireg.foursquareapp.common.LocRepositoryGmsImpl;
-import ua.in.quireg.foursquareapp.common.LocRepositoryImpl;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorage;

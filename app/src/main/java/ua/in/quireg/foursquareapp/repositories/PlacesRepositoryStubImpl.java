@@ -1,17 +1,12 @@
 package ua.in.quireg.foursquareapp.repositories;
 
-import android.content.Context;
 import android.support.v4.util.Pair;
 
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.PlacesNearbyRespond;
@@ -33,7 +28,7 @@ public class PlacesRepositoryStubImpl implements PlacesRepository {
     }
 
     @Override
-    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String radius, String limit) {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String query, String radius, String limit) {
         ArrayList<Pair<Venue, VenueExtended>> arrayList = new ArrayList<>();
 
         try {

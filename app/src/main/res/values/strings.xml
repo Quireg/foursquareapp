@@ -7,7 +7,12 @@
     <string name="error_ok_button">Okay</string>
     <string name="error_copy_button">Copy to clipboard &amp; close</string>
     <string name="error_copied_text">Copied to clipboard</string>
+
+    <string name="error_internet_text">No internet =(</string>
     <string name="error_permission_text">Location permission required</string>
+    <string name="error_gps_text">No GPS =(</string>
+
     <string name="default_list_title">Showing some places around. Use search for more.</string>
+    <string name="search_list_title">"Results for -%s- "</string>
     <string name="loading">Loading…</string>
 </resources>

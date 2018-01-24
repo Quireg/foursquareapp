@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="colorPrimary">#424242</color>-->
-    <!--<color name="colorPrimaryDark">#212121</color>-->
-    <!--<color name="colorAccent">#821010</color>-->
 
     <color name="windowBackground">#BDBDBD</color>
     <color name="colorPrimary">#607D8B</color>
     <color name="colorPrimaryDark">#455A64</color>
-    <color name="colorAccent">#F57F17</color>
+    <color name="colorAccent">#FF009688</color>
 
     <color name="transparent">#00000000</color>
     <color name="black">#000000</color>
@@ -20,5 +17,6 @@
     <color name="subject">#111111</color>
     <color name="timestamp">#4285f4</color>
     <color name="message">#7a7a7a</color>
+    <color name="accent_material_light_1">#009688</color>
 
 </resources>
