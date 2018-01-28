@@ -5,6 +5,7 @@ import android.support.annotation.StringRes;
 import ru.terrakok.cicerone.Navigator;
 import ru.terrakok.cicerone.commands.Command;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateLocationPickerScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
@@ -27,6 +28,8 @@ public abstract class MainNavigator implements Navigator {
 
     public abstract void navigateFilterScreen();
 
+    public abstract void navigateLocationPickerScreen();
+
     @Override
     public void applyCommand(Command command) {
         if (command instanceof SendShortToast) {
@@ -46,6 +49,9 @@ public abstract class MainNavigator implements Navigator {
         }
         if (command instanceof NavigateFilterScreen) {
             navigateFilterScreen();
+        }
+        if (command instanceof NavigateLocationPickerScreen) {
+            navigateLocationPickerScreen();
         }
 
     }

@@ -5,7 +5,6 @@ import com.arellomobile.mvp.MvpPresenter;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.CompositeDisposable;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
@@ -22,7 +21,6 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
     @Inject MainRouter mRouter;
     @Inject FoursquareApplication mFoursquareApplication;
     @Inject QueryFilter mQueryFilter;
-    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     public FilterScreenPresenter() {
         super();
@@ -32,9 +30,9 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
-        getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
-        getViewState().resetLocation("In the Middle of Nowhere");
+//        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
+//        getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
+//        getViewState().resetLocation("In the Middle of Nowhere");
     }
 
     public void resetFilter() {

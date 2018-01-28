@@ -4,169 +4,197 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:background="?android:windowBackground"
     android:orientation="vertical"
-    style="@style/AppTheme"
-    tools:ignore="HardcodedText">
-
-    <TextView
-        android:id="@+id/sortby_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        android:text="Sort By"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <View
-        android:id="@+id/divider1"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintTop_toBottomOf="@id/sortby_title" />
+    tools:ignore="HardcodedText, RtlSymmetry">
 
     <LinearLayout
-        android:id="@+id/sortby_button_layout"
+        android:id="@+id/sort_by_block"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/divider1">
-
-        <Switch
-            android:id="@+id/relevance_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Relevance" />
-
-        <Switch
-            android:id="@+id/distance_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Distance" />
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/filterby_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Filter By"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/sortby_button_layout"/>
-
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintTop_toBottomOf="@id/filterby_title" />
-
-    <LinearLayout
-        style="?android:attr/buttonBarStyle"
-        android:id="@+id/filterby_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/divider2">
-
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/price_1_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="$" />
-
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/price_2_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="$$" />
-
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/price_3_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="$$$" />
-
-        <Button
-            style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/price_4_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="$$$$" />
-    </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/searchhere_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search here"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/filterby_button_layout"/>
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintTop_toBottomOf="@id/searchhere_title" />
-
-    <FrameLayout
-        android:id="@+id/searchhere_text_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/divider3">
+        android:padding="12dp"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/current_loc_textview"
+            android:id="@+id/sortby_title"
+            style="?android:textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sort" />
+
+        <View
+            android:id="@+id/divider1"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:textSize="22sp"
-            android:gravity="center"
-            tools:text="Peremohy Ave 32, you b*st*rd" />
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"
+            android:padding="4dp" />
 
-        <ImageButton
-            android:id="@+id/clear_custom_location_button"
-            android:scaleType="fitXY"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="-16dp"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/delete"
-            tools:ignore="ContentDescription" />
+        <LinearLayout
+            android:id="@+id/sortby_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:weightSum="2"
+            app:layout_constraintTop_toBottomOf="@id/divider1">
 
-    </FrameLayout>
+            <RadioButton
+                android:id="@+id/relevance_button"
+                style="?android:radioButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Relevance" />
+
+            <RadioButton
+                android:id="@+id/distance_button"
+                style="?android:radioButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Distance" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/filter_by_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/sort_by_block">
+
+
+        <TextView
+            android:id="@+id/filterby_title"
+            style="?android:textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fitler" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"
+            android:padding="4dp" />
+
+        <LinearLayout
+            android:id="@+id/filterby_button_layout"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:weightSum="4">
+
+            <Button
+                android:id="@+id/price_1_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/price_2_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$$"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/price_3_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$$$"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/price_4_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$$$$"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/current_loc_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/filter_by_block">
+
+        <TextView
+            android:id="@+id/searchhere_title"
+            style="?android:textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search around:" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent" />
+
+        <FrameLayout
+            android:id="@+id/searchhere_text_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@drawable/black_frame">
+
+            <TextView
+                android:id="@+id/current_loc_textview"
+                style="?android:textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:paddingEnd="32dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                tools:text="Peremohy Ave 32, you b*st*rd" />
+
+            <ImageButton
+                android:id="@+id/clear_custom_location_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end|center_vertical"
+                android:scaleType="centerInside"
+                android:src="@drawable/delete"
+                tools:ignore="ContentDescription" />
+
+        </FrameLayout>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/select_custom_location_button"
+        style="@android:style/TextAppearance.Material"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Place And Radius"
         android:layout_margin="4dp"
         android:padding="4dp"
-        app:layout_constraintTop_toBottomOf="@id/searchhere_text_layout" />
+        android:text="Pick search area"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/current_loc_layout" />
 
 
 </android.support.constraint.ConstraintLayout>

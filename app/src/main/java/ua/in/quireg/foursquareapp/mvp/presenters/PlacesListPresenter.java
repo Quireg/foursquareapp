@@ -43,6 +43,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
     private final String DEFAULT_RADIUS = "10000";
     private final String DEFAULT_LIMIT = "20";
+    private final String DEFAULT_LOC = "37.422,-122.084";
 
     CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
@@ -77,34 +78,28 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                             if (query.isEmpty()) return;
                             if (!checkPreconditions()) return;
 
-                            Location l = mLocRepository.getLastKnownLocation();
-                            LocationEntity e = new LocationEntity(l.getLatitude(), l.getLongitude());
-
                             getViewState().setListTitle(String.format(mFoursquareApplication.getString(R.string.search_list_title), query));
-                            kickOffRequest(e, DEFAULT_RADIUS, query);
+                            kickOffRequest(query,DEFAULT_LOC ,DEFAULT_RADIUS);
                         },
                         throwable -> mRouter.showErrorDialog(throwable.getLocalizedMessage())
                 );
     }
 
     public void startNegotiation() {
+
         if (!checkPreconditions()) {
             return;
         }
 
         if (mQueryFilter.getLocation() != null) {
 
-            kickOffRequest(mQueryFilter.getLocation(), mQueryFilter.getSearchRadius(), null);
+            kickOffRequest(null, mQueryFilter.getLocation().getLatLonCommaSeparated(), mQueryFilter.getSearchRadius());
 
         } else {
-
-            if (mLocRepository.getLastKnownLocation() != null) {
-
-                Location l = mLocRepository.getLastKnownLocation();
-                LocationEntity e = new LocationEntity(l.getLatitude(), l.getLongitude(), false);
+            if (true){
                 getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
+                kickOffRequest(null, DEFAULT_LOC, DEFAULT_RADIUS);
 
-                kickOffRequest(e, DEFAULT_RADIUS, null);
             } else {
                 //As soon as callback triggered network call will be dispatched.
                 getViewState().setListTitle("Waiting for GPS");
@@ -122,7 +117,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
         @Override
         public void onLocationChanged(Location location) {
 
-            kickOffRequest(new LocationEntity(location.getLatitude(), location.getLongitude()), DEFAULT_RADIUS, null);
+            kickOffRequest(null, String.format("%s,%s", location.getLatitude(), location.getLongitude()), DEFAULT_RADIUS);
 
             mLocRepository.unsubscribeFromLocUpdates(mLocListener);
 
@@ -131,7 +126,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
         }
     }
 
-    private void kickOffRequest(LocationEntity l, String radius, String query) {
+    private void kickOffRequest(String query, String lonLatCommaSeparated, String radius) {
 
         getViewState().clear();
 
@@ -139,7 +134,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
         mCompositeDisposable.add(
                 new NearbyPlacesInteractor()
-                        .getNearbyPlaces(l.getLatLonCommaSeparated(), query, radius, DEFAULT_LIMIT)
+                        .getNearbyPlaces(query, lonLatCommaSeparated,  radius, DEFAULT_LIMIT)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 next -> getViewState().addToList(next),

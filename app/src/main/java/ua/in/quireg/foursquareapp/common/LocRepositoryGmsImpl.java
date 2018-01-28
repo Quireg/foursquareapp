@@ -27,8 +27,6 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     private Vector<LocationListener> mLocationlisteners = new Vector<>();
 
-    private Location lastKnownLocation;
-
     public LocRepositoryGmsImpl(Application app) {
 
         mGoogleApiClient = new GoogleApiClient.Builder(app.getApplicationContext())
@@ -36,11 +34,6 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-    }
-
-    @Override
-    public Location getLastKnownLocation() {
-        return lastKnownLocation;
     }
 
     @Override
@@ -67,8 +60,8 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
         }
     }
 
-    @SuppressLint("MissingPermission")
     @Override
+    @SuppressLint("MissingPermission")
     public void onConnected(Bundle bundle) {
 
         LocationRequest mLocationRequest = LocationRequest.create();
@@ -90,8 +83,6 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void onLocationChanged(Location location) {
-        lastKnownLocation = location;
-
         for (LocationListener locationListener : mLocationlisteners) {
             locationListener.onLocationChanged(location);
         }

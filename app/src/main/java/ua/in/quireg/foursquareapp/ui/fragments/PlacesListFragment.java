@@ -35,6 +35,8 @@ import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
 
 public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
+    private static final String EXTRA_NAME = "extra_name";
+
     @BindView(R.id.places_list) protected RecyclerView mRecyclerView;
     @BindView(R.id.header_textview) protected TextView mHeaderView;
     @BindView(R.id.shadowline) protected View mShadowline;
@@ -44,6 +46,16 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     PlacesListPresenter mPlacesListPresenter;
 
     PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
+
+    public static PlacesListFragment getNewInstance(String name) {
+        PlacesListFragment fragment = new PlacesListFragment();
+
+        Bundle arguments = new Bundle();
+        arguments.putString(EXTRA_NAME, name);
+        fragment.setArguments(arguments);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -14,9 +14,15 @@ import android.widget.TextView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
+import io.reactivex.Observable;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
@@ -27,6 +33,9 @@ import ua.in.quireg.foursquareapp.mvp.views.FilterView;
  */
 
 public class FilterFragment extends MvpFragment implements FilterView {
+
+    private static final String EXTRA_NAME = "extra_name";
+
 
     @BindView(R.id.relevance_button) protected Button relevance_button;
     @BindView(R.id.distance_button) protected Button distance_button;
@@ -39,6 +48,16 @@ public class FilterFragment extends MvpFragment implements FilterView {
 
     @InjectPresenter(type = PresenterType.WEAK)
     FilterScreenPresenter mFilterScreenPresenter;
+
+    public static FilterFragment getNewInstance(String name) {
+        FilterFragment fragment = new FilterFragment();
+
+        Bundle arguments = new Bundle();
+        arguments.putString(EXTRA_NAME, name);
+        fragment.setArguments(arguments);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,6 +128,10 @@ public class FilterFragment extends MvpFragment implements FilterView {
 
     @Override
     public void toggleRelevance(boolean relevance) {
+
+        if(mIsAnimating) {
+            return;
+        }
 
         if (relevance) {
             relevance_button.setPressed(true);

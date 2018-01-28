@@ -26,7 +26,7 @@
             android:layout_height="1dp"
             android:layout_below="@id/header_textview"
             android:background="@drawable/shadowline"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

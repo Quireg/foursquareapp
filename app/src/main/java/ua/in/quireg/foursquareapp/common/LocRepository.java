@@ -11,8 +11,6 @@ import com.google.android.gms.location.LocationListener;
 
 public interface LocRepository {
 
-    Location getLastKnownLocation();
-
     void subscribeToLocUpdates(LocationListener l);
 
     void unsubscribeFromLocUpdates(LocationListener l);

@@ -5,8 +5,8 @@
     <string name="menu_filter_title">Filter</string>
     <string name="menu_reset_title">Reset</string>
     <string name="error_ok_button">Okay</string>
-    <string name="error_copy_button">Copy to clipboard &amp; close</string>
-    <string name="error_copied_text">Copied to clipboard</string>
+    <string name="error_copy_button">Copy to clipboard</string>
+    <string name="error_done_text">Done</string>
 
     <string name="error_internet_text">No internet =(</string>
     <string name="error_permission_text">Location permission required</string>
