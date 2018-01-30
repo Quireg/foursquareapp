@@ -4,8 +4,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,8 +11,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -61,6 +59,12 @@ public class MapViewFragment extends Fragment {
 
             mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target));
             mMap.addCircle(new CircleOptions().center(mMap.getCameraPosition().target).radius(mMap.getMaxZoomLevel()));
+
+            Circle circle = mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(loc.latitude, loc.longitude))
+                    .radius(1000)
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
 
             mMap.setOnCameraMoveListener(() -> {
                 mMap.clear();

@@ -113,7 +113,7 @@
         <TextView
             style="?android:textAppearanceMedium"
             android:id="@+id/price_category"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="end"
@@ -176,10 +176,10 @@
             tools:text="16, Shcherbakivskogo Danyls St." />
 
         <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             map:liteMode="true"

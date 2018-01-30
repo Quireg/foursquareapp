@@ -1,7 +1,5 @@
 package ua.in.quireg.foursquareapp.common;
 
-import android.location.Location;
-
 import com.google.android.gms.location.LocationListener;
 
 /**
