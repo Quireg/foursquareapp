@@ -23,7 +23,7 @@ android {
         config {
             keyAlias properties['keyAlias']
             keyPassword properties['keyPassword']
-            storeFile file(properties['storeFile'])
+            storeFile file("${projectDir}/../" + properties['storeFile'])
             storePassword properties['storePassword']
         }
     }
