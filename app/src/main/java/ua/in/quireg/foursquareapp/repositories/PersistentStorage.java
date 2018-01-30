@@ -4,6 +4,7 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import ua.in.quireg.foursquareapp.models.LocationEntity;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
 
 /**
@@ -13,8 +14,13 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
 
 public interface PersistentStorage {
 
-    Single<VenueExtended> getVenueFromCache(String id);
+    LocationEntity getLocationFromCache();
 
-    Completable addVenueToCache(VenueExtended venue);
+    void addLocationToCache(LocationEntity e);
+
+    String getRadiusFromCache();
+
+    void addRadiusToCache(String r);
+
 
 }

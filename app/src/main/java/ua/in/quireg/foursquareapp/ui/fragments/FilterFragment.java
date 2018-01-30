@@ -8,21 +8,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Completable;
-import io.reactivex.CompletableEmitter;
-import io.reactivex.CompletableOnSubscribe;
-import io.reactivex.Observable;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
@@ -34,30 +28,17 @@ import ua.in.quireg.foursquareapp.mvp.views.FilterView;
 
 public class FilterFragment extends MvpFragment implements FilterView {
 
-    private static final String EXTRA_NAME = "extra_name";
-
-
-    @BindView(R.id.relevance_button) protected Button relevance_button;
-    @BindView(R.id.distance_button) protected Button distance_button;
-    @BindView(R.id.price_1_button) protected Button price_1_button;
-    @BindView(R.id.price_2_button) protected Button price_2_button;
-    @BindView(R.id.price_3_button) protected Button price_3_button;
-    @BindView(R.id.price_4_button) protected Button price_4_button;
+    @BindView(R.id.relevance_button) protected ToggleButton relevance_button;
+    @BindView(R.id.distance_button) protected ToggleButton distance_button;
+    @BindView(R.id.price_1_button) protected ToggleButton price_1_button;
+    @BindView(R.id.price_2_button) protected ToggleButton price_2_button;
+    @BindView(R.id.price_3_button) protected ToggleButton price_3_button;
+    @BindView(R.id.price_4_button) protected ToggleButton price_4_button;
 
     @BindView(R.id.current_loc_textview) protected TextView current_loc_textview;
 
     @InjectPresenter(type = PresenterType.WEAK)
     FilterScreenPresenter mFilterScreenPresenter;
-
-    public static FilterFragment getNewInstance(String name) {
-        FilterFragment fragment = new FilterFragment();
-
-        Bundle arguments = new Bundle();
-        arguments.putString(EXTRA_NAME, name);
-        fragment.setArguments(arguments);
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +62,10 @@ public class FilterFragment extends MvpFragment implements FilterView {
                 mFilterScreenPresenter.resetFilter();
                 return true;
             }
+            case android.R.id.home: {
+                getActivity().onBackPressed();
+                return true;
+            }
         }
         return false;
     }
@@ -88,6 +73,11 @@ public class FilterFragment extends MvpFragment implements FilterView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActivity().getActionBar().setTitle(R.string.filter_screen_title);
+        }
 
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
 
@@ -126,71 +116,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
         onPriceTierButtonClick();
     }
 
-    @Override
-    public void toggleRelevance(boolean relevance) {
-
-        if(mIsAnimating) {
-            return;
-        }
-
-        if (relevance) {
-            relevance_button.setPressed(true);
-            distance_button.setPressed(false);
-        } else {
-            relevance_button.setPressed(false);
-            distance_button.setPressed(true);
-        }
-
-    }
-
-    @Override
-    public void togglePriceTier(int tier) {
-
-        // can't figure out better way to parse 4 bits of data =/
-
-        if (tier % 8 == 1) {
-            tier = tier - 8;
-            price_4_button.setPressed(true);
-        } else {
-            price_4_button.setPressed(false);
-        }
-
-        if (tier % 4 == 1) {
-            tier = tier - 4;
-            price_3_button.setPressed(true);
-        } else {
-            price_3_button.setPressed(false);
-        }
-
-        if (tier % 2 == 1) {
-            price_2_button.setPressed(true);
-            tier = tier - 2;
-        } else {
-            price_2_button.setPressed(false);
-        }
-        if (tier == 1) {
-            price_1_button.setPressed(true);
-        } else {
-            price_1_button.setPressed(false);
-        }
-
-    }
-
-    @Override
-    public void resetLocation(String text) {
-        current_loc_textview.setText(text);
-    }
-
-    private void onPriceTierButtonClick() {
-        int i = 0;
-        if (price_1_button.isPressed()) i = +1;
-        if (price_2_button.isPressed()) i = +2;
-        if (price_3_button.isPressed()) i = +4;
-        if (price_4_button.isPressed()) i = +8;
-
-        mFilterScreenPresenter.updatePriceFilters(i);
-    }
-
     @OnClick(R.id.select_custom_location_button)
     void pickLocation() {
         mFilterScreenPresenter.pickLocation();
@@ -200,5 +125,67 @@ public class FilterFragment extends MvpFragment implements FilterView {
     void resetLocation() {
         mFilterScreenPresenter.resetLocation();
     }
+
+
+    @Override
+    public void toggleRelevance(boolean relevance) {
+
+        if (relevance) {
+            relevance_button.setChecked(true);
+            distance_button.setChecked(false);
+        } else {
+            relevance_button.setChecked(false);
+            distance_button.setChecked(true);
+        }
+
+    }
+
+    @Override
+    public void togglePriceTier(int tier) {
+        // can't figure out better way to parse 4 bits of data =/
+
+        if (tier - 8 >= 0) {
+            tier = tier - 8;
+            price_4_button.setChecked(true);
+        } else {
+            price_4_button.setChecked(false);
+        }
+
+        if (tier - 4 >= 0) {
+            tier = tier - 4;
+            price_3_button.setChecked(true);
+        } else {
+            price_3_button.setChecked(false);
+        }
+
+        if (tier - 2 >= 0) {
+            tier = tier - 2;
+            price_2_button.setChecked(true);
+        } else {
+            price_2_button.setChecked(false);
+        }
+        if (tier == 1) {
+            price_1_button.setChecked(true);
+        } else {
+            price_1_button.setChecked(false);
+        }
+
+    }
+
+    @Override
+    public void setLocation(String text) {
+        current_loc_textview.setText(text);
+    }
+
+    private void onPriceTierButtonClick() {
+        int i = 0;
+        if (price_1_button.isChecked()) i = i + 1;
+        if (price_2_button.isChecked()) i = i + 2;
+        if (price_3_button.isChecked()) i = i + 4;
+        if (price_4_button.isChecked()) i = i + 8;
+
+        mFilterScreenPresenter.updatePriceFilter(i);
+    }
+
 
 }

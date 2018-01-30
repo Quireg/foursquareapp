@@ -1,6 +1,11 @@
 package ua.in.quireg.foursquareapp.common;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 
 import java.io.BufferedReader;
@@ -58,6 +63,28 @@ public class Utils {
 
     public static boolean isNotNullOrEmpty(String string) {
         return !isNullOrEmpty(string);
+    }
+
+    public static StateListDrawable getStateListDrawable(Context context, @DrawableRes int drawable) {
+
+        Drawable stateSelected = ContextCompat.getDrawable(context, drawable);
+        Drawable stateUnselected = stateSelected.getConstantState().newDrawable();
+
+        stateUnselected.mutate();
+        stateUnselected.setAlpha(126);
+
+        StateListDrawable stateListDrawable = new StateListDrawable();
+
+        stateListDrawable.addState(
+                new int[]{android.R.attr.state_selected},
+                stateSelected
+        );
+        stateListDrawable.addState(
+                new int[]{android.R.attr.state_enabled},
+                stateUnselected
+        );
+
+        return stateListDrawable;
     }
 
 }

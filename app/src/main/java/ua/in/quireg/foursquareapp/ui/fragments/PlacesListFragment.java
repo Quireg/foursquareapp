@@ -17,16 +17,16 @@ import android.widget.TextView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import ua.in.quireg.foursquareapp.R;
-import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
-import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 4:09 PM.
@@ -34,8 +34,6 @@ import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
  */
 
 public class PlacesListFragment extends MvpFragment implements PlacesListView {
-
-    private static final String EXTRA_NAME = "extra_name";
 
     @BindView(R.id.places_list) protected RecyclerView mRecyclerView;
     @BindView(R.id.header_textview) protected TextView mHeaderView;
@@ -46,16 +44,6 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     PlacesListPresenter mPlacesListPresenter;
 
     PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
-
-    public static PlacesListFragment getNewInstance(String name) {
-        PlacesListFragment fragment = new PlacesListFragment();
-
-        Bundle arguments = new Bundle();
-        arguments.putString(EXTRA_NAME, name);
-        fragment.setArguments(arguments);
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,39 +56,12 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
         inflater.inflate(R.menu.search_menu, menu);
 
-        SearchView mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        MenuItem searchViewItem = menu.findItem(R.id.search);
 
-        Observable<String> stringObservable = Observable.defer(() -> Observable.create(e -> {
+        initMenuSearch(searchViewItem);
 
-            mSearchView.setOnQueryTextListener(
-                    new SearchView.OnQueryTextListener() {
-                        @Override
-                        public boolean onQueryTextSubmit(String s) {
-                            e.onNext(s);
-//                            e.onComplete();
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onQueryTextChange(String s) {
-                            e.onNext(s);
-                            return false;
-                        }
-                    });
-
-            mSearchView.setOnCloseListener(() -> {
-//                e.onComplete();
-                return false;
-            });
-
-        })
-                .cast(String.class));
-
-//                .filter(Utils::isNotNullOrEmpty)
-        mPlacesListPresenter.onSearchRequest(stringObservable);
     }
 
     @Override
@@ -122,12 +83,17 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+            getActivity().getActionBar().setTitle(R.string.app_name);
+        }
+
         View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
 
         unbinder = ButterKnife.bind(this, view);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));
+        //mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mPlacesListRecyclerViewAdapter);
 
         return view;
@@ -135,12 +101,17 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
     @Override
     public void setListTitle(String title) {
-        mShadowline.setVisibility(View.VISIBLE);
+        if (mShadowline.getVisibility() != View.VISIBLE) {
+            mShadowline.setVisibility(View.VISIBLE);
+        }
         mHeaderView.setText(title);
     }
 
     @Override
     public void addToList(PlaceEntity place) {
+        if (mShadowline.getVisibility() != View.VISIBLE) {
+            mShadowline.setVisibility(View.VISIBLE);
+        }
         mPlacesListRecyclerViewAdapter.addToList(place);
     }
 
@@ -148,7 +119,6 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     public void clear() {
         mPlacesListRecyclerViewAdapter.clearList();
         mShadowline.setVisibility(View.INVISIBLE);
-
     }
 
     @Override
@@ -156,8 +126,58 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         if (visible) {
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void initMenuSearch(MenuItem searchViewItem) {
+
+        SearchView searchView = (SearchView) searchViewItem.getActionView();
+
+        Observable<String> stringObservable = Observable.defer(
+                () -> Observable.create(
+                        searchRequested -> {
+                                    Observable.create(searchTextChanged -> {
+
+                                        searchView.setOnQueryTextListener(
+                                                new SearchView.OnQueryTextListener() {
+                                                    @Override
+                                                    public boolean onQueryTextSubmit(String s) {
+                                                        searchRequested.onNext(s);
+                                                        searchView.clearFocus();
+                                                        return true;
+                                                    }
+
+                                                    @Override
+                                                    public boolean onQueryTextChange(String s) {
+                                                        searchTextChanged.onNext(s);
+                                                        return true;
+                                                    }
+                                                });
+
+                                    })
+                                    .debounce(1000, TimeUnit.MILLISECONDS)
+                                    .subscribe(searchRequested::onNext);
+
+                        })
+                        .cast(String.class)
+                        .distinctUntilChanged()
+        );
+
+        searchViewItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                mPlacesListPresenter.onSearchRequest(stringObservable);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                mPlacesListPresenter.onSearchCanceled();
+                return true;
+            }
+        });
+
     }
 
 }

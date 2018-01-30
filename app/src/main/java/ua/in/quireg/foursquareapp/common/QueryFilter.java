@@ -15,9 +15,12 @@ public class QueryFilter {
     public static final int SORT_TYPE_RELEVANCE = 0;
     public static final int SORT_TYPE_DISTANCE = 1;
 
-    private static final String SORT_TYPE_PREFS = "sort_type";
-    private static final String PRICE_TIER_PREFS = "price_tier";
-    private static final String RADIUS_PREFS = "radius";
+    private static final String PREFS_SORT_TYPE = "sort_type";
+    private static final String PREFS_PRICE_TIER = "price_tier";
+    private static final String PREFS_RADIUS = "radius";
+    private static final String PREFS_LOC_LAT = "loc_lat";
+    private static final String PREFS_LOC_LON = "loc_lon";
+    private static final String PREFS_LOC_ADDRESS = "loc_address";
 
     private volatile int sortType;
     private volatile int priceTierFilter; //{1,2,4,8} bits
@@ -39,11 +42,28 @@ public class QueryFilter {
             throw new UnsupportedOperationException("No shared preferences provided");
         }
 
-        mSharedPreferences.edit()
-                .putInt(SORT_TYPE_PREFS, this.getSortType())
-                .putInt(PRICE_TIER_PREFS, this.getPriceTierFilter())
-                .putString(RADIUS_PREFS, this.getSearchRadius())
-                .apply();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        editor
+                .putInt(PREFS_SORT_TYPE, this.getSortType())
+                .putInt(PREFS_PRICE_TIER, this.getPriceTierFilter())
+                .putString(PREFS_RADIUS, this.getSearchRadius());
+
+
+        if (location != null) {
+
+            editor.putLong(PREFS_LOC_LAT,  Double.doubleToLongBits(location.getLat()))
+                    .putLong(PREFS_LOC_LON, Double.doubleToLongBits(location.getLon()));
+
+            if(location.getAddress() != null) {
+                editor.putString(PREFS_LOC_ADDRESS, location.getAddress());
+            }
+
+        }
+
+        if (!editor.commit()) {
+            throw new RuntimeException("Failed to save filter state");
+        }
     }
 
     public synchronized void resetState() {
@@ -53,11 +73,12 @@ public class QueryFilter {
 
         QueryFilter defaultFilter = QueryFilter.buildNew().build();
 
-        mSharedPreferences.edit()
-                .putInt(SORT_TYPE_PREFS, defaultFilter.getSortType())
-                .putInt(PRICE_TIER_PREFS, defaultFilter.getPriceTierFilter())
-                .putString(RADIUS_PREFS, defaultFilter.getSearchRadius())
-                .apply();
+        sortType = defaultFilter.sortType;
+        priceTierFilter = defaultFilter.priceTierFilter;
+        searchRadius = defaultFilter.searchRadius;
+        location = defaultFilter.location;
+
+        saveState();
     }
 
     public int getSortType() {
@@ -127,6 +148,10 @@ public class QueryFilter {
 
         public QueryFilter.Builder setSearchRadius(String radius) {
 
+            if (radius == null) {
+                return this;
+            }
+
             if (Integer.valueOf(radius) > 500 && Integer.valueOf(radius) < 100000) {
                 this.searchRadius = radius;
             } else {
@@ -160,19 +185,38 @@ public class QueryFilter {
 
         QueryFilter defaultQueryFilter = QueryFilter.buildNew().build();
 
-        return QueryFilter.buildNew()
-                .setSortType(sharedPreferences.getInt(SORT_TYPE_PREFS, defaultQueryFilter.getSortType()))
-                .setPriceTierFilter(sharedPreferences.getInt(PRICE_TIER_PREFS, defaultQueryFilter.getPriceTierFilter()))
-                .setSearchRadius(sharedPreferences.getString(RADIUS_PREFS, defaultQueryFilter.getSearchRadius()))
-                .setLocation(null)
-                .setBackupStorage(sharedPreferences)
-                .build();
+        LocationEntity locationEntity = null;
+
+        long latitudeLongBits = sharedPreferences.getLong(PREFS_LOC_LAT, 0);
+        long longitudeLongBits = sharedPreferences.getLong(PREFS_LOC_LON, 0);
+        String address = sharedPreferences.getString(PREFS_LOC_ADDRESS, null);
+
+        if (latitudeLongBits != 0 && longitudeLongBits != 0) {
 
 //        Those who suggested to use putFloat and getFloat are unfortunately very wrong. Casting a double to a float can result in
 //        Lost precision
 //        Overflow
 //        Underflow
 //        Dead kittens
+
+            locationEntity = new LocationEntity(
+                    Double.longBitsToDouble(latitudeLongBits),
+                    Double.longBitsToDouble(longitudeLongBits)
+            );
+
+
+            locationEntity.setAddress(address);
+        }
+
+        return QueryFilter.buildNew()
+                .setSortType(sharedPreferences.getInt(PREFS_SORT_TYPE, defaultQueryFilter.getSortType()))
+                .setPriceTierFilter(sharedPreferences.getInt(PREFS_PRICE_TIER, defaultQueryFilter.getPriceTierFilter()))
+                .setSearchRadius(sharedPreferences.getString(PREFS_RADIUS, null))
+                .setLocation(locationEntity)
+                .setBackupStorage(sharedPreferences)
+                .build();
+
+
     }
 
 }

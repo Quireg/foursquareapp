@@ -1,20 +1,11 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.arellomobile.mvp.MvpDelegate;
 
-import java.util.concurrent.CountDownLatch;
-
 import butterknife.Unbinder;
-import timber.log.Timber;
-import ua.in.quireg.foursquareapp.R;
 
 /**
  * Date: 19-Dec-15
@@ -30,43 +21,11 @@ public class MvpFragment extends Fragment {
     private boolean mIsStateSaved;
     private MvpDelegate<? extends MvpFragment> mMvpDelegate;
     protected Unbinder unbinder;
-    //TODO fix this
-    protected volatile boolean mIsAnimating;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getMvpDelegate().onCreate(savedInstanceState);
-    }
-
-    @Override
-    public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
-        Animator animator = super.onCreateAnimator(transit, enter, nextAnim);
-
-        if(animator == null) return null;
-
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mIsAnimating = true;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mIsAnimating = false;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                mIsAnimating = false;
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                mIsAnimating = true;
-            }
-        });
-        return animator;
     }
 
 
@@ -114,7 +73,9 @@ public class MvpFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unbinder.unbind();
+        if(unbinder != null) {
+            unbinder.unbind();
+        }
 
         //We leave the screen and respectively all fragments will be destroyed
         if (getActivity().isFinishing()) {

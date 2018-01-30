@@ -6,6 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
@@ -17,21 +19,23 @@ import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExte
  * foursquareapp
  */
 
-public class NearbyPlacesInteractor {
+public class PlacesListInteractor {
 
     @Inject @Named("release") PlacesRepository mPlacesRepository;
 
-    public NearbyPlacesInteractor() {
+    public PlacesListInteractor() {
         FoursquareApplication.getAppComponent().inject(this);
     }
 
     public Observable<PlaceEntity> getNearbyPlaces(String query, String latLonCommaSeparated, String radius, String limit) {
 
         return mPlacesRepository.getPlaces(latLonCommaSeparated, query, radius, limit)
-                .map(NearbyPlacesInteractor::mapEntities);
+                .map(this::mapPlaceEntity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private static PlaceEntity mapEntities(Pair<Venue, VenueExtended> pair) {
+    private PlaceEntity mapPlaceEntity(Pair<Venue, VenueExtended> pair) {
 
         PlaceEntity placeEntity = new PlaceEntity();
 
@@ -40,6 +44,10 @@ public class NearbyPlacesInteractor {
 
         if (venue == null || venueExtended == null) {
             throw new RuntimeException("received null response from api");
+        }
+
+        if (venue.getId() != null) {
+            placeEntity.setId(venue.getId());
         }
 
         if (venue.getName() != null) {

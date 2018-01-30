@@ -28,30 +28,29 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
     }
 
     @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-//        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
-//        getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
-//        getViewState().resetLocation("In the Middle of Nowhere");
+    public void attachView(FilterView view) {
+        super.attachView(view);
+        updateUI();
     }
 
     public void resetFilter() {
         mQueryFilter.resetState();
-        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
-        getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
+        updateUI();
     }
 
-    public void updatePriceFilters(int i) {
+    public void updatePriceFilter(int i) {
         mQueryFilter.setPriceTierFilter(i);
-        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
+        updateUI();
     }
 
     public void onDistanceClick() {
         mQueryFilter.setSortType(QueryFilter.SORT_TYPE_DISTANCE);
+        updateUI();
     }
 
     public void onRelevanceClick() {
         mQueryFilter.setSortType(QueryFilter.SORT_TYPE_RELEVANCE);
+        updateUI();
     }
 
     public void pickLocation() {
@@ -59,6 +58,19 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
     }
 
     public void resetLocation() {
-        getViewState().resetLocation("");
+        mQueryFilter.setLocation(null);
+        updateUI();
+    }
+
+    private void updateUI() {
+        getViewState().togglePriceTier(mQueryFilter.getPriceTierFilter());
+        getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
+
+        if (mQueryFilter.getLocation() == null) {
+            getViewState().setLocation("Your current location");
+        } else {
+            getViewState().setLocation(mQueryFilter.getLocation().getLatLonCommaSeparated());
+        }
+
     }
 }

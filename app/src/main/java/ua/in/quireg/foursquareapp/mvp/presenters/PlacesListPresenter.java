@@ -9,8 +9,6 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.google.android.gms.location.LocationListener;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -22,10 +20,10 @@ import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.LocRepository;
 import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
-import ua.in.quireg.foursquareapp.domain.NearbyPlacesInteractor;
-import ua.in.quireg.foursquareapp.models.LocationEntity;
+import ua.in.quireg.foursquareapp.domain.PlacesListInteractor;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
+import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 6:26 PM.
@@ -39,11 +37,12 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     @Inject MainRouter mRouter;
     @Inject QueryFilter mQueryFilter;
     @Inject LocRepository mLocRepository;
+    @Inject PersistentStorage mPersistentStorage;
     @Inject FoursquareApplication mFoursquareApplication;
 
-    private final String DEFAULT_RADIUS = "10000";
+    private PlacesListInteractor mPlacesListInteractor = new PlacesListInteractor();
+
     private final String DEFAULT_LIMIT = "20";
-    private final String DEFAULT_LOC = "37.422,-122.084";
 
     CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
@@ -72,17 +71,31 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     public void onSearchRequest(Observable<String> stringObservable) {
 
         stringObservable
-                .debounce(2000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(query -> {
-                            if (query.isEmpty()) return;
-                            if (!checkPreconditions()) return;
-
-                            getViewState().setListTitle(String.format(mFoursquareApplication.getString(R.string.search_list_title), query));
-                            kickOffRequest(query,DEFAULT_LOC ,DEFAULT_RADIUS);
+                .filter(s -> !s.isEmpty())
+                .filter(s1 -> checkPreconditions())
+                .map(q -> {
+                    getViewState().setListTitle(String.format(mFoursquareApplication.getString(R.string.search_list_title), q));
+                    getViewState().clear();
+                    return q;
+                })
+                .switchMap(query -> mPlacesListInteractor
+                        .getNearbyPlaces(query, mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), mPersistentStorage.getRadiusFromCache(), DEFAULT_LIMIT)
+                        .doOnComplete(() -> getViewState().toggleLoadingView(false))
+                )
+                .subscribe(
+                        next -> getViewState().addToList(next),
+                        error -> {
+                            getViewState().toggleLoadingView(false);
+                            mRouter.showErrorDialog(error.getLocalizedMessage());
                         },
-                        throwable -> mRouter.showErrorDialog(throwable.getLocalizedMessage())
+                        () -> getViewState().toggleLoadingView(false)
                 );
+
+    }
+
+    public void onSearchCanceled() {
+        startNegotiation();
     }
 
     public void startNegotiation() {
@@ -93,12 +106,12 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
         if (mQueryFilter.getLocation() != null) {
 
-            kickOffRequest(null, mQueryFilter.getLocation().getLatLonCommaSeparated(), mQueryFilter.getSearchRadius());
+            getNearbyPlaces(mQueryFilter.getLocation().getLatLonCommaSeparated(), mQueryFilter.getSearchRadius());
 
         } else {
-            if (true){
-                getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
-                kickOffRequest(null, DEFAULT_LOC, DEFAULT_RADIUS);
+            if (false) {
+
+                getNearbyPlaces(mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), mPersistentStorage.getRadiusFromCache());
 
             } else {
                 //As soon as callback triggered network call will be dispatched.
@@ -117,24 +130,23 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
         @Override
         public void onLocationChanged(Location location) {
 
-            kickOffRequest(null, String.format("%s,%s", location.getLatitude(), location.getLongitude()), DEFAULT_RADIUS);
+            getNearbyPlaces(String.format("%s,%s", location.getLatitude(), location.getLongitude()), mPersistentStorage.getRadiusFromCache());
 
             mLocRepository.unsubscribeFromLocUpdates(mLocListener);
-
-            getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
 
         }
     }
 
-    private void kickOffRequest(String query, String lonLatCommaSeparated, String radius) {
+    private void getNearbyPlaces(String lonLatCommaSeparated, String radius) {
 
         getViewState().clear();
+        getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
 
         mCompositeDisposable.clear();
 
         mCompositeDisposable.add(
-                new NearbyPlacesInteractor()
-                        .getNearbyPlaces(query, lonLatCommaSeparated,  radius, DEFAULT_LIMIT)
+                mPlacesListInteractor
+                        .getNearbyPlaces(null, lonLatCommaSeparated, radius, DEFAULT_LIMIT)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 next -> getViewState().addToList(next),

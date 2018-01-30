@@ -12,12 +12,10 @@ import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.common.LocRepository;
 import ua.in.quireg.foursquareapp.common.LocRepositoryGmsImpl;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
-import ua.in.quireg.foursquareapp.common.ResourceManager;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
-import ua.in.quireg.foursquareapp.repositories.PersistentStorageStubImpl;
+import ua.in.quireg.foursquareapp.repositories.PersistentStorageImpl;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepository;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
-import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryStubImpl;
 
 /**
  * Created by Arcturus Mengsk on 1/21/2018, 10:35 AM.
@@ -36,22 +34,14 @@ public class RepositoryModule {
 
     @Provides
     @Singleton
-    @Named("stub")
-    PlacesRepository placesFakeRepository(ResourceManager c) {
-        return new PlacesRepositoryStubImpl(c);
-    }
-
-    @Provides
-    @Singleton
     LocRepository locRepository(FoursquareApplication foursquareApplication) {
         return new LocRepositoryGmsImpl(foursquareApplication);
     }
 
     @Provides
     @Singleton
-    @Named("stub")
-    PersistentStorage persistentStubStorage() {
-        return new PersistentStorageStubImpl();
+    PersistentStorage persistentStorage(SharedPreferences sharedPreferences) {
+        return new PersistentStorageImpl(sharedPreferences);
     }
 
     @Provides

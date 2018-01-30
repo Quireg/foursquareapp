@@ -11,11 +11,6 @@ public class LocationEntity {
     private double lon;
     private String address;
 
-    public LocationEntity(double lat, double lon, boolean remote) {
-        this.lat = lat;
-        this.lon = lon;
-    }
-
     public LocationEntity(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;

@@ -6,6 +6,7 @@ import ru.terrakok.cicerone.Navigator;
 import ru.terrakok.cicerone.commands.Command;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateLocationPickerScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlaceScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
@@ -30,8 +31,11 @@ public abstract class MainNavigator implements Navigator {
 
     public abstract void navigateLocationPickerScreen();
 
+    public abstract void navigatePlaceScreen(String id);
+
     @Override
     public void applyCommand(Command command) {
+
         if (command instanceof SendShortToast) {
             sendShortToast(((SendShortToast) command).getToast());
         }
@@ -52,6 +56,9 @@ public abstract class MainNavigator implements Navigator {
         }
         if (command instanceof NavigateLocationPickerScreen) {
             navigateLocationPickerScreen();
+        }
+        if (command instanceof NavigatePlaceScreen) {
+            navigatePlaceScreen(((NavigatePlaceScreen) command).getId());
         }
 
     }

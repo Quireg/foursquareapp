@@ -15,4 +15,24 @@
     <string name="default_list_title">Showing some places around. Use search for more.</string>
     <string name="search_list_title">"Results for -%s- "</string>
     <string name="loading">Loading…</string>
+
+    <string name="tips_header">Tips</string>
+    <string name="sort_header">Sort</string>
+    <string name="fitler_header">Fitler</string>
+    <string name="relevance">Relevance</string>
+    <string name="distance">Distance</string>
+    <string name="search_around">Search around:</string>
+    <string name="pick_search_area">Select Place And Radius</string>
+    <string name="no_tips_message">No tips found</string>
+
+    <string name="filter_screen_title">Filter</string>
+    <string name="location_picker_screen_title">Pick location &amp; area</string>
+
+
+    <string name="filter_screen_price1">$</string>
+    <string name="filter_screen_price2">$$</string>
+    <string name="filter_screen_price3">$$$</string>
+    <string name="filter_screen_price4">$$$$</string>
+
+    <string name="image_desc">This is image</string>
 </resources>

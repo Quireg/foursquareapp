@@ -8,8 +8,7 @@
     <RelativeLayout
         android:id="@+id/header_layout"
         android:layout_height="36dp"
-        android:layout_width="match_parent"
-        android:elevation="4dp">
+        android:layout_width="match_parent">
 
         <TextView
             android:id="@+id/header_textview"
@@ -18,15 +17,15 @@
             android:layout_margin="8dp"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
-            tools:text="@string/default_list_title"
-            />
+            tools:text="@string/default_list_title"/>
+
         <View
             android:id="@+id/shadowline"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/header_textview"
             android:background="@drawable/shadowline"
-            android:visibility="visible"/>
+            android:visibility="invisible"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

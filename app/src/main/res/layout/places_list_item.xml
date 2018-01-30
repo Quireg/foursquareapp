@@ -4,14 +4,13 @@
     android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
-    tools:ignore="RtlHardcoded, RtlSymmetry, ContentDescription">
+    android:padding="4dp">
 
     <FrameLayout
         android:id="@+id/icon_container"
         android:layout_width="@dimen/list_icon_width_height"
         android:layout_height="@dimen/list_icon_width_height"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_margin="4dp">
 
@@ -19,7 +18,8 @@
             android:id="@+id/places_list_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/doge" />
+            android:src="@drawable/doge"
+            android:contentDescription="@string/image_desc"/>
 
     </FrameLayout>
 
@@ -27,41 +27,41 @@
         android:id="@+id/text_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/places_list_rating"
-        android:layout_toRightOf="@id/icon_container"
+        android:layout_toStartOf="@id/places_list_rating"
+        android:layout_toEndOf="@id/icon_container"
         android:orientation="vertical"
         android:padding="4dp"
         android:weightSum="7">
 
         <TextView
+            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
             android:ellipsize="end"
-            android:lines="1"
-            android:textSize="@dimen/msg_text_primary"
+            android:singleLine="true"
             android:textStyle="bold"
             tools:text="Central Park" />
 
         <TextView
+            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_type_and_priceCategory"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
             android:ellipsize="end"
-            android:lines="1"
-            android:textSize="@dimen/msg_text_secondary"
+            android:singleLine="true"
             tools:text="Park, $$$" />
 
         <TextView
+            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_distance_and_address"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
             android:ellipsize="end"
             android:lines="2"
-            android:textSize="@dimen/msg_text_secondary"
             tools:text="16m steps to 59th St to 110th St" />
 
     </LinearLayout>
@@ -78,6 +78,15 @@
         android:paddingEnd="6dp"
         android:textStyle="bold"
         tools:text="^_^" />
+
+    <View
+        android:id="@+id/shadowline3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="4dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/icon_container"
+        android:background="@drawable/shadowline"/>
 
 
 </RelativeLayout>

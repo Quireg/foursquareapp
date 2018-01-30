@@ -13,6 +13,6 @@ public interface FilterView extends MvpView {
 
     void togglePriceTier(int tier);
 
-    void resetLocation(String text);
+    void setLocation(String text);
 
 }

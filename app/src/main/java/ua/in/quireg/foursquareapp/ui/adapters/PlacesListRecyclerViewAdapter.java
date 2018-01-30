@@ -14,8 +14,13 @@ import com.bumptech.glide.Glide;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.terrakok.cicerone.Router;
+import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
+import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 
 /**
  * Created by Arcturus Mengsk on 1/19/2018, 12:25 AM.
@@ -23,6 +28,9 @@ import ua.in.quireg.foursquareapp.models.PlaceEntity;
  */
 
 public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    @Inject
+    protected MainRouter mRouter;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
@@ -34,6 +42,7 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     private static final int HEADERS_COUNT = 0;
 
     public PlacesListRecyclerViewAdapter(Context context) {
+        FoursquareApplication.getAppComponent().inject(this);
         mContext = context;
     }
 
@@ -69,6 +78,8 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         if (holder instanceof PlaceEntityViewHolder) {
 
             PlaceEntity placeEntity = mItemsList.get(position);
+
+            holder.itemView.setOnClickListener(v -> mRouter.placeScreen(placeEntity.getId()));
 
             ((PlaceEntityViewHolder) holder).title.setText(
                     placeEntity.getName()
@@ -155,6 +166,7 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
             type_and_priceCategory = view.findViewById(R.id.places_list_type_and_priceCategory);
             distance_and_address = view.findViewById(R.id.places_list_distance_and_address);
             rating = view.findViewById(R.id.places_list_rating);
+
         }
     }
 
