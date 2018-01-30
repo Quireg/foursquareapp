@@ -1,11 +1,13 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,9 +17,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import javax.inject.Inject;
+
+import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
+import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
 
 /**
  * Created by Arcturus Mengsk on 1/27/2018, 12:35 AM.
@@ -26,12 +33,18 @@ import ua.in.quireg.foursquareapp.R;
 
 public class MapViewFragment extends Fragment {
 
-    MapView mMapView;
-    private GoogleMap googleMap;
+    private MapView mMapView;
+    private SeekBar mSeekBar;
+    @Inject
+    protected PersistentStorage mPersistentStorage;
+
+    private static final int RADIUS_LOW = 500;
+    private static final int RADIUS_HIGH = 10000;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FoursquareApplication.getAppComponent().inject(this);
     }
 
     @Override
@@ -44,6 +57,7 @@ public class MapViewFragment extends Fragment {
         }
 
         mMapView = rootView.findViewById(R.id.mapView);
+        mSeekBar = rootView.findViewById(R.id.seekBar);
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume(); // needed to get the map to display immediately
@@ -55,36 +69,55 @@ public class MapViewFragment extends Fragment {
         }
 
         mMapView.getMapAsync(mMap -> {
-            googleMap = mMap;
 
-            mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target));
-            mMap.addCircle(new CircleOptions().center(mMap.getCameraPosition().target).radius(mMap.getMaxZoomLevel()));
+            mMap.getUiSettings().setZoomGesturesEnabled(false);
+
+
+
+
+            LatLng currentLocation = new LatLng(
+                    mPersistentStorage.getLocationFromCache().getLat(),
+                    mPersistentStorage.getLocationFromCache().getLon()
+            );
+
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(12).build();
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            Marker marker =  mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target));
 
             Circle circle = mMap.addCircle(new CircleOptions()
-                    .center(new LatLng(loc.latitude, loc.longitude))
+                    .center(mMap.getCameraPosition().target)
                     .radius(1000)
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
+                    .strokeColor(Color.RED));
 
             mMap.setOnCameraMoveListener(() -> {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target));
-                mMap.addCircle(new CircleOptions().center(mMap.getCameraPosition().target));
+                marker.setPosition(mMap.getCameraPosition().target);
+                circle.setCenter(mMap.getCameraPosition().target);
             });
 
+            float currentZoom = mMap.getCameraPosition().zoom;
 
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (progress == 0) {
+                        int effectiveRadius = RADIUS_LOW ;
+                    } else {
+                        int effectiveRadius = RADIUS_LOW + ((RADIUS_HIGH - RADIUS_LOW)/progress);
+                    }
+                }
 
-            // For showing a move to my location button
-            googleMap.setMyLocationEnabled(true);
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            // For dropping a marker at a point on the Map
-            LatLng sydney = new LatLng(-34, 151);
+                }
 
-//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description")).setDraggable(false);
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-            // For zooming automatically to the location of the marker
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+            });
+
         });
 
         return rootView;
