@@ -84,11 +84,6 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-            getActivity().getActionBar().setTitle(R.string.app_name);
-        }
-
         View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
 
         unbinder = ButterKnife.bind(this, view);

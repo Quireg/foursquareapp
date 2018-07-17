@@ -3,7 +3,6 @@
     <style name="AppMaterialTheme" parent="Theme.AppCompat.Light">
         <item name="fontFamily">sans-serif-thin</item>
         <item name="toolbarStyle">@style/App.ToolBar</item>
-
     </style>
 
     <style name="App.ToolBar" parent="Widget.AppCompat.Toolbar">

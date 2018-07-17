@@ -1,11 +1,13 @@
 package ua.in.quireg.foursquareapp.mvp.routing;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import ru.terrakok.cicerone.Navigator;
@@ -34,13 +36,16 @@ import ua.in.quireg.foursquareapp.ui.fragments.WelcomeFragment;
 @SuppressWarnings("WeakerAccess")
 public class MainNavigator implements Navigator {
 
-    private Activity mActivity;
+    private AppCompatActivity mActivity;
     private Toast mToast;
     private static final String API_QUOTA_EXCEEDED_ERROR = "HTTP 429 ";
-    public MainNavigator(Activity activity) {
-        this.mActivity = activity;
-    }
 
+    public MainNavigator(AppCompatActivity activity) {
+        mActivity = activity;
+        mActivity.getFragmentManager().addOnBackStackChangedListener(() -> {
+
+        });
+    }
 
     @Override
     public void applyCommand(Command command) {
@@ -51,10 +56,12 @@ public class MainNavigator implements Navigator {
 
         if (command instanceof NavigatePlacesListScreen) {
             navigatePlacesList();
+            mActivity.getSupportActionBar().setTitle(R.string.app_name);
         }
 
         if (command instanceof NavigateWelcomeScreen) {
             navigateWelcomeScreen();
+            mActivity.getSupportActionBar().setTitle(R.string.not_a_title);
         }
 
         if (command instanceof RequestPermissions) {
@@ -70,6 +77,7 @@ public class MainNavigator implements Navigator {
         }
         if (command instanceof NavigateFilterScreen) {
             navigateFilterScreen();
+            mActivity.getSupportActionBar().setTitle(R.string.filter_screen_title);
         }
         if (command instanceof NavigateLocationPickerScreen) {
             navigateLocationPickerScreen();
@@ -113,8 +121,13 @@ public class MainNavigator implements Navigator {
                 .show();
     }
 
-    public void navigatePlacesList() {
+    public void navigateWelcomeScreen() {
+        mActivity.getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new WelcomeFragment())
+                .commit();
+    }
 
+    public void navigatePlacesList() {
         mActivity.getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new PlacesListFragment())
                 .addToBackStack(null)
@@ -123,32 +136,27 @@ public class MainNavigator implements Navigator {
     }
 
     public void navigateFilterScreen() {
-        mActivity.getFragmentManager().beginTransaction()
+
+        FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction()
                 .setCustomAnimations(
-                        R.animator.frag_enter_right_left, //fragment entering
-                        R.animator.frag_exit_right_left, //fragment leaving
-                        R.animator.frag_enter_pop_left_right, //fragment returning
-                        R.animator.frag_exit_pop_left_right //fragment leaving
+                        R.animator.frag_enter_up_down, //fragment entering
+                        0, //fragment leaving
+                        0, //fragment returning
+                        R.animator.frag_exit_down_up //fragment leaving
                 )
                 .replace(R.id.fragment_container, new FilterFragment())
-                .addToBackStack(null)
-                .commit();
+                .addToBackStack(null);
+        ft.commit();
 
-    }
-
-    public void navigateWelcomeScreen() {
-        mActivity.getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new WelcomeFragment())
-                .commit();
     }
 
     public void navigateLocationPickerScreen() {
         FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction()
                 .setCustomAnimations(
-                        R.animator.frag_enter_right_left,
-                        R.animator.frag_exit_right_left,
-                        R.animator.frag_enter_pop_left_right,
-                        R.animator.frag_exit_pop_left_right
+                        R.animator.frag_enter_up_down, //fragment entering
+                        0, //fragment leaving
+                        0, //fragment returning
+                        R.animator.frag_exit_down_up //fragment leaving
                 )
                 .replace(R.id.fragment_container, new MapViewFragment())
                 .addToBackStack(null);

@@ -6,7 +6,7 @@
 
     <gradient
         android:startColor="@color/shadowline_color"
-        android:endColor="@color/transparent"
+        android:endColor="@android:color/transparent"
         android:angle="90.0"
         android:type="linear" />
 </shape>

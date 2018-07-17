@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -28,8 +29,8 @@ import ua.in.quireg.foursquareapp.mvp.views.FilterView;
 
 public class FilterFragment extends MvpFragment implements FilterView {
 
-    @BindView(R.id.relevance_button) protected ToggleButton relevance_button;
-    @BindView(R.id.distance_button) protected ToggleButton distance_button;
+    @BindView(R.id.relevance_button) protected RadioButton relevance_button;
+    @BindView(R.id.distance_button) protected RadioButton distance_button;
     @BindView(R.id.price_1_button) protected ToggleButton price_1_button;
     @BindView(R.id.price_2_button) protected ToggleButton price_2_button;
     @BindView(R.id.price_3_button) protected ToggleButton price_3_button;
@@ -44,7 +45,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -52,7 +52,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.filter_menu, menu);
-
     }
 
     @Override
@@ -73,12 +72,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActivity().getActionBar().setTitle(R.string.filter_screen_title);
-        }
-
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
 
         unbinder = ButterKnife.bind(this, view);
@@ -186,6 +179,4 @@ public class FilterFragment extends MvpFragment implements FilterView {
 
         mFilterScreenPresenter.updatePriceFilter(i);
     }
-
-
 }

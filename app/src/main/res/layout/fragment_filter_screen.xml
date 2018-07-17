@@ -19,8 +19,8 @@
             android:padding="12dp">
 
             <TextView
-                style="?android:textAppearanceLarge"
                 android:id="@+id/sortby_title"
+                style="?android:textAppearanceLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sort_header" />
@@ -29,7 +29,9 @@
                 android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorAccent"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="?attr/colorAccent"
                 android:padding="4dp" />
 
             <LinearLayout
@@ -42,29 +44,46 @@
                 android:weightSum="2"
                 app:layout_constraintTop_toBottomOf="@id/divider1">
 
-                <ToggleButton
-                    style="?android:attr/buttonBarButtonStyle"
+                <RadioButton
                     android:id="@+id/relevance_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textOn="@string/relevance"
-                    android:textOff="@string/relevance"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:textColor="@drawable/filter_button_text_color" />
-
-                <ToggleButton
                     style="?android:attr/buttonBarButtonStyle"
-                    android:id="@+id/distance_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textOn="@string/distance"
-                    android:textOff="@string/distance"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:textColor="@drawable/filter_button_text_color"/>
+                    android:text="@string/relevance"
+                    tools:checked="true"/>
+
+                <RadioButton
+                    android:id="@+id/distance_button"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/distance"/>
+
+                <!--<ToggleButton-->
+                <!--style="?android:attr/buttonBarButtonStyle"-->
+                <!--android:id="@+id/relevance_button"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:textOn="@string/relevance"-->
+                <!--android:textOff="@string/relevance"-->
+                <!--android:focusable="false"-->
+                <!--android:focusableInTouchMode="false"-->
+                <!--android:textColor="@drawable/filter_button_text_color" />-->
+
+                <!--<ToggleButton-->
+                <!--style="?android:attr/buttonBarButtonStyle"-->
+                <!--android:id="@+id/distance_button"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:textOn="@string/distance"-->
+                <!--android:textOff="@string/distance"-->
+                <!--android:focusable="false"-->
+                <!--android:focusableInTouchMode="false"-->
+                <!--android:textColor="@drawable/filter_button_text_color"/>-->
             </LinearLayout>
 
 
@@ -90,7 +109,9 @@
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorAccent"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="?attr/colorAccent"
                 android:padding="4dp" />
 
             <LinearLayout
@@ -104,56 +125,56 @@
                 android:weightSum="4">
 
                 <ToggleButton
-                    style="?android:attr/buttonBarButtonStyle"
                     android:id="@+id/price_1_button"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textOn="@string/filter_screen_price1"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textColor="@drawable/filter_button_text_color"
                     android:textOff="@string/filter_screen_price1"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:textColor="@drawable/filter_button_text_color"
-                    android:textSize="24sp"/>
+                    android:textOn="@string/filter_screen_price1"
+                    android:textSize="24sp" />
 
                 <ToggleButton
-                    style="?android:attr/buttonBarButtonStyle"
                     android:id="@+id/price_2_button"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textOn="@string/filter_screen_price2"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textColor="@drawable/filter_button_text_color"
                     android:textOff="@string/filter_screen_price2"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:textColor="@drawable/filter_button_text_color"
-                    android:textSize="24sp"/>
+                    android:textOn="@string/filter_screen_price2"
+                    android:textSize="24sp" />
 
                 <ToggleButton
-                    style="?android:attr/buttonBarButtonStyle"
                     android:id="@+id/price_3_button"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textOn="@string/filter_screen_price3"
-                    android:textOff="@string/filter_screen_price3"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:textColor="@drawable/filter_button_text_color"
-                    android:textSize="24sp"/>
+                    android:textOff="@string/filter_screen_price3"
+                    android:textOn="@string/filter_screen_price3"
+                    android:textSize="24sp" />
 
                 <ToggleButton
-                    style="?android:attr/buttonBarButtonStyle"
                     android:id="@+id/price_4_button"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textOn="@string/filter_screen_price4"
-                    android:textOff="@string/filter_screen_price4"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:textColor="@drawable/filter_button_text_color"
-                    android:textSize="24sp"/>
+                    android:textOff="@string/filter_screen_price4"
+                    android:textOn="@string/filter_screen_price4"
+                    android:textSize="24sp" />
             </LinearLayout>
 
 
@@ -178,7 +199,9 @@
                 android:id="@+id/divider3"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorAccent" />
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="?attr/colorAccent" />
 
             <RelativeLayout
                 android:id="@+id/searchhere_text_layout"
@@ -192,10 +215,10 @@
                     style="?android:textAppearanceMedium"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_toStartOf="@id/clear_custom_location_button"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:layout_toStartOf="@id/clear_custom_location_button"
                     tools:text="Peremohy Ave 32 !!!" />
 
                 <ImageButton
@@ -203,10 +226,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/cross"
                     android:adjustViewBounds="true"
-                    android:contentDescription="@string/image_desc"/>
+                    android:contentDescription="@string/image_desc"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/cross" />
 
             </RelativeLayout>
 
@@ -222,7 +245,6 @@
             android:text="@string/pick_search_area"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/current_loc_layout" />
-
 
     </android.support.constraint.ConstraintLayout>
 

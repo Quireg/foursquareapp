@@ -39,7 +39,7 @@ public class WelcomeScreenPresenter extends MvpPresenter<WelcomeView> {
     private final int PAUSE_PERMISSIONS_ANIM_DURATION = 1000;
     private final int PERMISSION_TEXT_ANIM_DURATION = 1000;
 
-    private boolean shouldAnimate = true;
+    private boolean shouldAnimate = false;
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
