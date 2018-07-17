@@ -6,7 +6,7 @@ properties.load(new FileInputStream(secretsFile))
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "ua.in.quireg.foursquareapp"
         minSdkVersion 22
@@ -44,9 +44,8 @@ android {
 }
 
 
-
 ext {
-    supportLibraryVersion = '27.0.2'
+    supportLibraryVersion = '27.1.1'
     butterknifeVersion = "8.8.1"
     leakCanaryVersion = "1.5.4"
     dagger2Version = "2.11"
@@ -58,7 +57,7 @@ ext {
 dependencies {
 
     //Design
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation group: 'de.hdodenhof', name: 'circleimageview', version: '2.2.0'
 
     //GMS

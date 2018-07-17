@@ -80,7 +80,11 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                     return q;
                 })
                 .switchMap(query -> mPlacesListInteractor
-                        .getNearbyPlaces(query, mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), mPersistentStorage.getRadiusFromCache(), DEFAULT_LIMIT)
+                        .getNearbyPlaces(
+                                query,
+                                mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
+                                mPersistentStorage.getRadiusFromCache(), DEFAULT_LIMIT
+                        )
                         .doOnComplete(() -> getViewState().toggleLoadingView(false))
                 )
                 .subscribe(
@@ -109,7 +113,7 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
             getNearbyPlaces(mQueryFilter.getLocation().getLatLonCommaSeparated(), mQueryFilter.getSearchRadius());
 
         } else {
-            if (false) {
+            if (true) {
 
                 getNearbyPlaces(mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), mPersistentStorage.getRadiusFromCache());
 

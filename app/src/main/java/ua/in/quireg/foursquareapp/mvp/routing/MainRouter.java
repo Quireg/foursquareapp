@@ -4,11 +4,11 @@ import android.support.annotation.StringRes;
 
 import ru.terrakok.cicerone.BaseRouter;
 import ru.terrakok.cicerone.commands.Command;
-import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateBackwards;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateLocationPickerScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlaceScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateWelcomeScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.ShowError;
@@ -42,6 +42,10 @@ public final class MainRouter extends BaseRouter {
 
     public void requestPermissions() {
         executeCommand(new RequestPermissions());
+    }
+
+    public void welcomeScreen() {
+        executeCommand(new NavigateWelcomeScreen());
     }
 
     public void showErrorDialog(String text) {

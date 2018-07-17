@@ -29,8 +29,6 @@ import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
 @Module
 public class OkHttpModule {
 
-    private int networkRequestsCount = 0;
-
     @Provides
     @Singleton
     OkHttpClient provideOkHttpClient(Cache cache) {

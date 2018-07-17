@@ -15,7 +15,7 @@ import butterknife.Unbinder;
  * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
-@SuppressWarnings("ConstantConditions")
+
 public class MvpFragment extends Fragment {
 
     private boolean mIsStateSaved;

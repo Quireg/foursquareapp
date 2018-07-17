@@ -27,6 +27,7 @@ import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
+import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 4:09 PM.
@@ -93,7 +94,7 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         unbinder = ButterKnife.bind(this, view);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity()));
         mRecyclerView.setAdapter(mPlacesListRecyclerViewAdapter);
 
         return view;
@@ -133,29 +134,34 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     private void initMenuSearch(MenuItem searchViewItem) {
 
         SearchView searchView = (SearchView) searchViewItem.getActionView();
+        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+
+        searchView.findViewById(id).setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) searchView.setIconified(true);
+        });
 
         Observable<String> stringObservable = Observable.defer(
                 () -> Observable.create(
                         searchRequested -> {
-                                    Observable.create(searchTextChanged -> {
+                            Observable.create(searchTextChanged -> {
 
-                                        searchView.setOnQueryTextListener(
-                                                new SearchView.OnQueryTextListener() {
-                                                    @Override
-                                                    public boolean onQueryTextSubmit(String s) {
-                                                        searchRequested.onNext(s);
-                                                        searchView.clearFocus();
-                                                        return true;
-                                                    }
+                                searchView.setOnQueryTextListener(
+                                        new SearchView.OnQueryTextListener() {
+                                            @Override
+                                            public boolean onQueryTextSubmit(String s) {
+                                                searchRequested.onNext(s);
+                                                searchView.clearFocus();
+                                                return true;
+                                            }
 
-                                                    @Override
-                                                    public boolean onQueryTextChange(String s) {
-                                                        searchTextChanged.onNext(s);
-                                                        return true;
-                                                    }
-                                                });
+                                            @Override
+                                            public boolean onQueryTextChange(String s) {
+                                                searchTextChanged.onNext(s);
+                                                return true;
+                                            }
+                                        });
 
-                                    })
+                            })
                                     .debounce(1000, TimeUnit.MILLISECONDS)
                                     .subscribe(searchRequested::onNext);
 

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">4 Square</string>
+    <string name="subtitle">.... --- .... -- ..</string>
     <string name="menu_search_title">Search</string>
     <string name="menu_refresh_title">Refresh</string>
     <string name="menu_filter_title">Filter</string>
@@ -9,10 +10,11 @@
     <string name="error_done_text">Done</string>
 
     <string name="error_internet_text">No internet =(</string>
+    <string name="error_api_quota">Run out of API quota for today.</string>
     <string name="error_permission_text">Location permission required</string>
     <string name="error_gps_text">No GPS =(</string>
 
-    <string name="default_list_title">Showing some places around. Use search for more.</string>
+    <string name="default_list_title">Places around. Search for more.</string>
     <string name="search_list_title">"Results for -%s- "</string>
     <string name="loading">Loading…</string>
 
@@ -22,8 +24,8 @@
     <string name="relevance">Relevance</string>
     <string name="distance">Distance</string>
     <string name="search_around">Search around:</string>
-    <string name="pick_search_area">Select Place And Radius</string>
-    <string name="no_tips_message">No tips found</string>
+    <string name="pick_search_area">Pick a place</string>
+    <string name="no_tips_message">No one said anything about this place yet.</string>
 
     <string name="filter_screen_title">Filter</string>
     <string name="location_picker_screen_title">Pick location &amp; area</string>
@@ -34,5 +36,11 @@
     <string name="filter_screen_price3">$$$</string>
     <string name="filter_screen_price4">$$$$</string>
 
-    <string name="image_desc">This is image</string>
+    <string name="image_desc">This is doge</string>
+    <string name="grant_location_permissions_button">Grant location permissions</string>
+    <string name="proceed_to_places_list">sure thing</string>
+    <string name="permission_required_text">Location permission is required. Would you mind?</string>
+    <string name="permission_ok_text">Hi! Ready to explore the city?</string>
+    <string name="welcome_text">Hey there!\u0020</string>
+    <string name="oh_error">Oh, error.</string>
 </resources>

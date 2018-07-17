@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -57,6 +59,7 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
     @BindView(R.id.description) TextView mDescription;
     @BindView(R.id.address) TextView mAddress;
     @BindView(R.id.tips_not_found) TextView mNoTips;
+    @BindView(R.id.tips_load_progress_bar) ProgressBar mTipsProgressBar;
     @BindView(R.id.tips_layout) LinearLayout mTipsLinearLayout;
     @BindView(R.id.root_scrollview) ScrollView mScrollView;
 
@@ -133,10 +136,6 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
 
     @Override
     public void setPlaceTip(TipEntity tip) {
-        if (mNoTips.getVisibility() != View.GONE || mTipsLinearLayout.getVisibility() != View.VISIBLE) {
-            mNoTips.setVisibility(View.GONE);
-            mTipsLinearLayout.setVisibility(View.VISIBLE);
-        }
 
         View tipView = mInflater.inflate(R.layout.single_tip_simple, mTipsLinearLayout, false);
 
@@ -144,10 +143,17 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
         TextView authorName = tipView.findViewById(R.id.author_name);
         ImageView authorImg = tipView.findViewById(R.id.author_img);
         TextView likes = tipView.findViewById(R.id.likes);
+        ImageView likes_img = tipView.findViewById(R.id.likes_img);
 
         tipText.setText(tip.getTipText());
         authorName.setText(tip.getAuthorName());
-        likes.setText(String.format("%s <3", tip.getLikes()));
+
+        if (tip.getLikes() != null && Integer.parseInt(tip.getLikes()) > 0) {
+            likes.setText(tip.getLikes());
+            likes_img.setVisibility(View.VISIBLE);
+            likes.setVisibility(View.VISIBLE);
+        }
+
 
         Glide.with(getActivity().getApplicationContext())
                 .load(tip.getAuthorImage())
@@ -155,6 +161,26 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
 
 
         mTipsLinearLayout.addView(tipView);
+    }
+
+    @Override
+    public void toggleTipsLoading(boolean isLoading) {
+        if (isLoading) {
+            mTipsProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mTipsProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void toggleTipsLayout(boolean visible) {
+        if (visible) {
+            mNoTips.setVisibility(View.INVISIBLE);
+            mTipsLinearLayout.setVisibility(View.VISIBLE);
+        } else {
+            mNoTips.setVisibility(View.VISIBLE);
+            mTipsLinearLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -208,7 +234,6 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
             }
 
         });
-
         return view;
     }
 

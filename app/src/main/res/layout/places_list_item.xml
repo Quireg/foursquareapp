@@ -1,65 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:orientation="horizontal">
+
 
     <FrameLayout
         android:id="@+id/icon_container"
-        android:layout_width="@dimen/list_icon_width_height"
+        android:layout_width="0dp"
         android:layout_height="@dimen/list_icon_width_height"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="4dp">
+        android:layout_weight="30">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/places_list_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/doge"
-            android:contentDescription="@string/image_desc"/>
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/image_desc"
+            android:src="@drawable/doge" />
 
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/text_layout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/places_list_rating"
-        android:layout_toEndOf="@id/icon_container"
-        android:orientation="vertical"
-        android:padding="4dp"
-        android:weightSum="7">
+        android:layout_height="match_parent"
+        android:layout_weight="70"
+        android:orientation="vertical">
 
         <TextView
-            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_title"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
             android:textStyle="bold"
             tools:text="Central Park" />
 
         <TextView
-            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_type_and_priceCategory"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
             tools:text="Park, $$$" />
 
         <TextView
-            style="?android:textAppearanceSmall"
             android:id="@+id/places_list_distance_and_address"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="2"
             tools:text="16m steps to 59th St to 110th St" />
@@ -68,25 +64,14 @@
 
     <TextView
         android:id="@+id/places_list_rating"
+        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:paddingStart="6dp"
+        android:layout_gravity="end"
+        android:gravity="top|end"
         android:paddingEnd="6dp"
+        android:paddingStart="6dp"
         android:textStyle="bold"
         tools:text="^_^" />
 
-    <View
-        android:id="@+id/shadowline3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="4dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/icon_container"
-        android:background="@drawable/shadowline"/>
-
-
-</RelativeLayout>
+</LinearLayout>

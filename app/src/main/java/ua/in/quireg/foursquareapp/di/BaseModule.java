@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
-import ua.in.quireg.foursquareapp.common.ResourceManager;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 3:52 PM.

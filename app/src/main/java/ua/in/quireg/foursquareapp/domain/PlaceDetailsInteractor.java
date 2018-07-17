@@ -129,23 +129,27 @@ public class PlaceDetailsInteractor {
 
                 tipEntity.setTipText(tips.getItems().get(i).getText());
 
-                tipEntity.setAuthorName(String.format(
-                        "%s, %s",
-                        tips.getItems().get(i).getUser().getFirstName(),
-                        tips.getItems().get(i).getUser().getLastName())
-                );
+                if (tips.getItems().get(i).getUser().getLastName() == null) {
+                    tipEntity.setAuthorName(tips.getItems().get(i).getUser().getFirstName());
+                } else {
+                    tipEntity.setAuthorName(String.format(
+                            "%s, %s",
+                            tips.getItems().get(i).getUser().getFirstName(),
+                            tips.getItems().get(i).getUser().getLastName())
+                    );
+                }
 
                 tipEntity.setLikes(tips.getItems().get(i).getLikes().getCount().toString());
 
                 tipEntity.setAuthorImage(Uri.parse(
                         tips.getItems().get(i).getUser().getPhoto().getPrefix() +
-                                "100x100" +
-                                tips.getItems().get(i).getUser().getPhoto().getSuffix()
+                        "100x100" +
+                        tips.getItems().get(i).getUser().getPhoto().getSuffix()
                 ));
 
                 tipEntities.add(tipEntity);
             } catch (Exception e) {
-                //I know that it is a bad practice, however I am a bit tired of nullptr handling here.
+                //I know that it is a bad practice, however I am a bit tired of nullptr from api.
                 Timber.e(e);
             }
         }

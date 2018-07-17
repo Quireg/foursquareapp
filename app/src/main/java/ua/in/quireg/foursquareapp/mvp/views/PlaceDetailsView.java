@@ -22,4 +22,7 @@ public interface PlaceDetailsView extends MvpView {
 
     void setPlaceTip(TipEntity tip);
 
+    void toggleTipsLoading(boolean isLoading);
+
+    void toggleTipsLayout(boolean visible);
 }

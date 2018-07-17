@@ -80,15 +80,16 @@ public class MapViewFragment extends Fragment {
                     mPersistentStorage.getLocationFromCache().getLon()
             );
 
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(12).build();
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
             Marker marker =  mMap.addMarker(new MarkerOptions().position(mMap.getCameraPosition().target));
 
             Circle circle = mMap.addCircle(new CircleOptions()
                     .center(mMap.getCameraPosition().target)
                     .radius(1000)
                     .strokeColor(Color.RED));
+
+
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(12).build();
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             mMap.setOnCameraMoveListener(() -> {
                 marker.setPosition(mMap.getCameraPosition().target);

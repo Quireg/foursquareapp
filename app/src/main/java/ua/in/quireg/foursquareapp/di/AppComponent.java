@@ -8,6 +8,7 @@ import ua.in.quireg.foursquareapp.domain.PlaceDetailsInteractor;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlaceDetailsPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
+import ua.in.quireg.foursquareapp.mvp.presenters.WelcomeScreenPresenter;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
@@ -31,5 +32,6 @@ public interface AppComponent {
     void inject(PlaceDetailsInteractor i);
     void inject(PlaceDetailsPresenter i);
     void inject(MapViewFragment i);
+    void inject(WelcomeScreenPresenter i);
 
 }

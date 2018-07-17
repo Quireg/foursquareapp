@@ -38,12 +38,14 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void subscribeToLocUpdates(LocationListener l) {
-        if (mLocationlisteners.contains(l)) {
-            Timber.w("This subscribe already receiving loc updates!");
-            return;
-        }
 
-        mLocationlisteners.add(l);
+        synchronized (this) {
+            if (mLocationlisteners.contains(l)) {
+                Timber.w("This subscribe already receiving loc updates!");
+                return;
+            }
+            mLocationlisteners.add(l);
+        }
 
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
@@ -52,11 +54,13 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
     }
 
     @Override
-    public void unsubscribeFromLocUpdates(LocationListener l) {
-        mLocationlisteners.remove(l);
+    public void unsubscribeFromLocUpdates(LocationListener listener) {
+        synchronized (this) {
+            mLocationlisteners.remove(listener);
 
-        if (mLocationlisteners.size() == 0) {
-            mGoogleApiClient.disconnect();
+            if (mLocationlisteners.size() == 0) {
+                mGoogleApiClient.disconnect();
+            }
         }
     }
 
@@ -83,8 +87,10 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void onLocationChanged(Location location) {
-        for (LocationListener locationListener : mLocationlisteners) {
-            locationListener.onLocationChanged(location);
+        synchronized (this) {
+            for (LocationListener locationListener : mLocationlisteners) {
+                locationListener.onLocationChanged(location);
+            }
         }
     }
 

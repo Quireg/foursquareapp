@@ -1,62 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tip_layout"
-    android:layout_margin="8dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:background="@color/windowBackgroundBright">
 
     <TextView
         android:id="@+id/tip_text"
+        style="@android:style/TextAppearance.Material.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="4dp"
+        android:padding="6dp"
+        android:textAlignment="textStart"
         tools:text="Search Area (Optional) (Pic. 5) sets where to search for places and sets search
 radius. In the middle of the screen there is a pin. It always stays in the middle. User can move
 the map, but not pin. When a user presses “OK” (tick) button, the location under the pin is saved
-to use for search on screen at pic. 1."
-        />
-
+to use for search on screen at pic. 1." />
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/author_img"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:src="@drawable/doge"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_below="@id/tip_text"
         android:contentDescription="@string/image_desc"
-        android:layout_below="@id/tip_text"/>
+        android:src="@drawable/doge" />
 
     <TextView
-        style="?android:textAppearanceMedium"
         android:id="@+id/author_name"
+        style="@android:style/TextAppearance.Material.Subhead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:gravity="center_vertical"
+        android:layout_alignBottom="@id/author_img"
         android:layout_below="@id/tip_text"
         android:layout_toEndOf="@id/author_img"
         android:layout_toStartOf="@id/likes"
-        android:layout_alignBottom="@id/author_img"
-        tools:text="Jake Wharton"/>
+        android:gravity="center_vertical"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        tools:text="Jake Wharton" />
 
     <TextView
-        style="?android:textAppearanceMedium"
         android:id="@+id/likes"
+        style="@android:style/TextAppearance.Material.Subhead"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_below="@id/tip_text"
-        android:layout_alignParentEnd="true"
+        android:layout_height="match_parent"
         android:layout_alignBottom="@id/author_img"
-        tools:text="128"/>
+        android:layout_below="@id/tip_text"
+        android:layout_toStartOf="@id/likes_img"
+        android:gravity="center_vertical"
+        android:visibility="invisible"
+        tools:text="128"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/likes_img"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tip_text"
+        android:padding="6dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/black_heart"
+        android:visibility="invisible"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
 
     <View
         android:id="@+id/shadowline3"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="1dp"
         android:layout_below="@id/author_img"
-        android:background="@drawable/shadowline"/>
+        android:layout_marginTop="6dp"
+        android:background="@drawable/shadowline" />
 </RelativeLayout>

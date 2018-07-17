@@ -2,11 +2,14 @@ package ua.in.quireg.foursquareapp.common;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,16 +56,24 @@ public class Utils {
         return Math.round(px);
     }
 
-    public static int booleanToInt(boolean b) {
-        return b ? 1 : 0;
-    }
-
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.length() == 0;
     }
 
     public static boolean isNotNullOrEmpty(String string) {
         return !isNullOrEmpty(string);
+    }
+
+    public static Point getDisplaySize(Context context) {
+
+        Point p = new Point(0,0);
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm != null) {
+            Display display = wm.getDefaultDisplay();
+            display.getSize(p);
+        }
+        return p;
     }
 
     public static StateListDrawable getStateListDrawable(Context context, @DrawableRes int drawable) {

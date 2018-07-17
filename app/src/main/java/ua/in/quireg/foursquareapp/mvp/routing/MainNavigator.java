@@ -1,37 +1,46 @@
 package ua.in.quireg.foursquareapp.mvp.routing;
 
-import android.support.annotation.StringRes;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.widget.Toast;
 
 import ru.terrakok.cicerone.Navigator;
 import ru.terrakok.cicerone.commands.Command;
+import ua.in.quireg.foursquareapp.R;
+import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateFilterScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateLocationPickerScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlaceScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigatePlacesListScreen;
+import ua.in.quireg.foursquareapp.mvp.routing.commands.NavigateWelcomeScreen;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.RequestPermissions;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.SendShortToast;
 import ua.in.quireg.foursquareapp.mvp.routing.commands.ShowError;
+import ua.in.quireg.foursquareapp.ui.fragments.FilterFragment;
+import ua.in.quireg.foursquareapp.ui.fragments.MapViewFragment;
+import ua.in.quireg.foursquareapp.ui.fragments.PlaceDetailsFragment;
+import ua.in.quireg.foursquareapp.ui.fragments.PlacesListFragment;
+import ua.in.quireg.foursquareapp.ui.fragments.WelcomeFragment;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 5:55 PM.
  * foursquareapp
  */
 
-public abstract class MainNavigator implements Navigator {
+@SuppressWarnings("WeakerAccess")
+public class MainNavigator implements Navigator {
 
-    public abstract void sendShortToast(@StringRes int stringId);
+    private Activity mActivity;
+    private Toast mToast;
+    private static final String API_QUOTA_EXCEEDED_ERROR = "HTTP 429 ";
+    public MainNavigator(Activity activity) {
+        this.mActivity = activity;
+    }
 
-    public abstract void navigatePlacesList();
-
-    public abstract void requestPermissions();
-
-    public abstract void showError(String text);
-
-    public abstract void navigateFilterScreen();
-
-    public abstract void navigateLocationPickerScreen();
-
-    public abstract void navigatePlaceScreen(String id);
 
     @Override
     public void applyCommand(Command command) {
@@ -44,12 +53,20 @@ public abstract class MainNavigator implements Navigator {
             navigatePlacesList();
         }
 
+        if (command instanceof NavigateWelcomeScreen) {
+            navigateWelcomeScreen();
+        }
+
         if (command instanceof RequestPermissions) {
             requestPermissions();
         }
 
         if (command instanceof ShowError) {
-            showError(((ShowError) command).getErrorText());
+            if (((ShowError) command).getErrorText().equals(API_QUOTA_EXCEEDED_ERROR)) {
+                sendShortToast(R.string.error_api_quota);
+            } else {
+                showError(((ShowError) command).getErrorText());
+            }
         }
         if (command instanceof NavigateFilterScreen) {
             navigateFilterScreen();
@@ -62,4 +79,93 @@ public abstract class MainNavigator implements Navigator {
         }
 
     }
+
+    public void sendShortToast(int stringId) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(mActivity.getApplicationContext(), stringId, Toast.LENGTH_SHORT);
+        mToast.show();
+    }
+
+    public void requestPermissions() {
+        PermissionManager.requestPermissions(mActivity);
+    }
+
+    public void showError(String errorText) {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(mActivity);
+
+        builder.setTitle(R.string.oh_error)
+                .setMessage(errorText)
+                .setNegativeButton(R.string.error_copy_button, (dialog, which) -> {
+
+                    ClipboardManager clipboard = (ClipboardManager) mActivity.getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Error", errorText));
+                        sendShortToast(R.string.error_done_text);
+                    }
+                })
+                .setPositiveButton(R.string.error_ok_button, (dialog, which) -> {
+
+                })
+                .setIcon(R.drawable.sad_cloud)
+                .show();
+    }
+
+    public void navigatePlacesList() {
+
+        mActivity.getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new PlacesListFragment())
+                .addToBackStack(null)
+                .commit();
+
+    }
+
+    public void navigateFilterScreen() {
+        mActivity.getFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.animator.frag_enter_right_left, //fragment entering
+                        R.animator.frag_exit_right_left, //fragment leaving
+                        R.animator.frag_enter_pop_left_right, //fragment returning
+                        R.animator.frag_exit_pop_left_right //fragment leaving
+                )
+                .replace(R.id.fragment_container, new FilterFragment())
+                .addToBackStack(null)
+                .commit();
+
+    }
+
+    public void navigateWelcomeScreen() {
+        mActivity.getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new WelcomeFragment())
+                .commit();
+    }
+
+    public void navigateLocationPickerScreen() {
+        FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.animator.frag_enter_right_left,
+                        R.animator.frag_exit_right_left,
+                        R.animator.frag_enter_pop_left_right,
+                        R.animator.frag_exit_pop_left_right
+                )
+                .replace(R.id.fragment_container, new MapViewFragment())
+                .addToBackStack(null);
+        ft.commit();
+    }
+
+    public void navigatePlaceScreen(String id) {
+        mActivity.getFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.animator.frag_enter_right_left,
+                        R.animator.frag_exit_right_left,
+                        R.animator.frag_enter_pop_left_right,
+                        R.animator.frag_exit_pop_left_right
+                )
+                .replace(R.id.fragment_container, PlaceDetailsFragment.getNewInstance(id))
+                .addToBackStack(null)
+                .commit();
+    }
+
 }

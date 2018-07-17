@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="windowBackground">#EFEBE9</color>
-    <color name="colorPrimary">#607D8B</color>
-    <color name="colorPrimaryDark">#455A64</color>
-    <color name="colorAccent">#009688</color>
+    <color name="colorPrimary">#304763</color>
+    <color name="colorPrimaryDark">#273B53</color>
+    <color name="colorAccent">#F6836E</color>
+
+    <color name="textPrimary">#6B6B6B</color>
+    <color name="textSecondary">#7363A0</color>
+
+    <color name="windowBackground">#e0e0e0</color>
+    <color name="windowBackgroundBright">#eeeeee</color>
+
+    <color name="transparent">#00FFFFFF</color>
+    <color name="shadowline_color">#40000000</color>
+
 
     <color name="orange">#FB8C00</color>
-
-    <color name="transparent">#00000000</color>
     <color name="black">#000000</color>
     <color name="red">#d50000</color>
     <color name="white">#FFFFFF</color>
-    <color name="shadowline_color">#40000000</color>
-    <color name="white_background">#f4f4f4</color>
 
-    <color name="from">#000000</color>
-    <color name="subject">#111111</color>
-    <color name="timestamp">#4285f4</color>
-    <color name="message">#7a7a7a</color>
-    <color name="accent_material_light_1">#009688</color>
+    <!--<color name="windowBackground">#EFEBE9</color>-->
+    <!--<color name="colorPrimary">#607D8B</color>-->
+    <!--<color name="colorPrimaryDark">#455A64</color>-->
+    <!--<color name="colorAccent">#009688</color>-->
+
+    <!--<color name="white_background">#f4f4f4</color>-->
+
+    <!--<color name="from">#000000</color>-->
+    <!--<color name="subject">#111111</color>-->
+    <!--<color name="timestamp">#4285f4</color>-->
+    <!--<color name="message">#7a7a7a</color>-->
+    <!--<color name="accent_material_light_1">#009688</color>-->
 
 </resources>
