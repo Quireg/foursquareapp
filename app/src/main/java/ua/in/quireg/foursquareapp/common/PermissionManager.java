@@ -8,7 +8,7 @@ import android.support.v4.app.ActivityCompat;
 
 public class PermissionManager {
 
-    private static final int REQUEST_ID = 1;
+    public static final int LOCATION_REQUEST_ID = 1;
 
     private static String[] PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -30,7 +30,7 @@ public class PermissionManager {
         ActivityCompat.requestPermissions(
                 activity,
                 PERMISSIONS,
-                REQUEST_ID
+                LOCATION_REQUEST_ID
         );
     }
 
