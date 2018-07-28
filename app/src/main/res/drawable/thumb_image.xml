@@ -1,0 +1,14 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--Working only for making drawables bigger =( -->
+    <item>
+        <shape>
+            <size
+                android:width="@dimen/seekbar_thumb_size"
+                android:height="@dimen/seekbar_thumb_size" />
+            <solid android:color="@android:color/transparent" />
+
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/seekbar_thumb"/>
+</layer-list>

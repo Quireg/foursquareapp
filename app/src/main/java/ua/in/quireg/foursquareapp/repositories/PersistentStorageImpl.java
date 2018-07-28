@@ -2,6 +2,7 @@ package ua.in.quireg.foursquareapp.repositories;
 
 import android.content.SharedPreferences;
 
+import timber.log.Timber;
 import ua.in.quireg.foursquareapp.models.LocationEntity;
 
 /**
@@ -14,7 +15,7 @@ public class PersistentStorageImpl implements PersistentStorage {
     private static final String PREFS_PERSIST_LOC_LAT = "loc_lat_persist";
     private static final String PREFS_PERSIST_LOC_LON = "loc_lon_persist";
     private static final String PREFS_PERSIST_LOC_ADDRESS = "loc_address_persist";
-    private static final String PREFS_PERSIST_RADIUS = "radius_persist";
+    private static final int PERSIST_AREA = 40000;
 
     private SharedPreferences mSharedPreferences;
 
@@ -37,12 +38,13 @@ public class PersistentStorageImpl implements PersistentStorage {
                     Double.longBitsToDouble(latitudeLongBits),
                     Double.longBitsToDouble(longitudeLongBits)
             );
-
             locationEntity.setAddress(address);
+            Timber.i("Got location from cache %s", locationEntity.toString());
         } else {
             locationEntity = new LocationEntity(50.442326, 30.521137);
+            locationEntity.setAddress("Wrong neighbourhood");
+            Timber.i("Got hardcoded location %s", locationEntity.toString());
         }
-
         return locationEntity;
     }
 
@@ -61,12 +63,8 @@ public class PersistentStorageImpl implements PersistentStorage {
     }
 
     @Override
-    public String getRadiusFromCache() {
-        return String.valueOf(mSharedPreferences.getInt(PREFS_PERSIST_RADIUS, 10000));
+    public int getAreaFromCache() {
+        return PERSIST_AREA;
     }
 
-    @Override
-    public void addRadiusToCache(String r) {
-        mSharedPreferences.edit().putInt(PREFS_PERSIST_RADIUS, Integer.parseInt(r)).apply();
-    }
 }

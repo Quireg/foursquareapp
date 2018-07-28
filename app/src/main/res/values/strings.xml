@@ -20,12 +20,12 @@
     <string name="loading">Loading…</string>
 
     <string name="tips_header">Tips</string>
-    <string name="sort_header">Sort</string>
-    <string name="fitler_header">Fitler</string>
+    <string name="sort_header">Sort places</string>
+    <string name="fitler_header">Adjust prices</string>
     <string name="relevance">Relevance</string>
     <string name="distance">Distance</string>
-    <string name="search_around">Search around:</string>
-    <string name="pick_search_area">Pick a place</string>
+    <string name="search_around">Search area:</string>
+    <string name="pick_search_area">Set custom location</string>
     <string name="no_tips_message">No one said anything about this place yet.</string>
 
     <string name="filter_screen_title">Filter</string>
@@ -41,7 +41,11 @@
     <string name="grant_location_permissions_button">Grant location permissions</string>
     <string name="proceed_to_places_list">sure thing</string>
     <string name="permission_required_text">Location permission is required. Would you mind?</string>
-    <string name="permission_ok_text">Hi! Ready to explore the city?</string>
+    <string name="permission_ok_text">Hi!\nReady to explore the city?</string>
     <string name="welcome_text">Hey there!\u0020</string>
     <string name="oh_error">Oh, error.</string>
+    <string name="min_search_circle">10m</string>
+    <string name="max_search_circle">10km</string>
+    <string name="reset_location">Reset</string>
+    <string name="set_location">Set</string>
 </resources>

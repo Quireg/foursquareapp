@@ -13,5 +13,6 @@
     <dimen name="main_button_margin">8dp</dimen>
     <dimen name="main_button_vertical_margin">16dp</dimen>
     <dimen name="main_button_initial_elevation">8dp</dimen>
+    <dimen name="seekbar_thumb_size">6dp</dimen>
 
 </resources>

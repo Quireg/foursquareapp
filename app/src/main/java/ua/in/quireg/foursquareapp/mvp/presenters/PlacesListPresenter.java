@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -21,6 +23,7 @@ import ua.in.quireg.foursquareapp.common.LocRepository;
 import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.domain.PlacesListInteractor;
+import ua.in.quireg.foursquareapp.models.LocationEntity;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
@@ -41,6 +44,11 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     @Inject FoursquareApplication mFoursquareApplication;
 
     private PlacesListInteractor mPlacesListInteractor = new PlacesListInteractor();
+    private LocListener mLocListener = new LocListener();
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private Runnable mReceiveLocUpdateTimeout = () -> {
+        getNearbyPlaces(mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), String.valueOf(mPersistentStorage.getAreaFromCache()));
+    };
 
     private final String DEFAULT_LIMIT = "20";
 
@@ -83,7 +91,8 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                         .getNearbyPlaces(
                                 query,
                                 mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
-                                mPersistentStorage.getRadiusFromCache(), DEFAULT_LIMIT
+                                String.valueOf(mPersistentStorage.getAreaFromCache()),
+                                DEFAULT_LIMIT
                         )
                         .doOnComplete(() -> getViewState().toggleLoadingView(false))
                 )
@@ -95,7 +104,6 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                         },
                         () -> getViewState().toggleLoadingView(false)
                 );
-
     }
 
     public void onSearchCanceled() {
@@ -110,34 +118,23 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
 
         if (mQueryFilter.getLocation() != null) {
 
-            getNearbyPlaces(mQueryFilter.getLocation().getLatLonCommaSeparated(), mQueryFilter.getSearchRadius());
+            getNearbyPlaces(mQueryFilter.getLocation().getLatLonCommaSeparated(), String.valueOf(mQueryFilter.getSearchArea()));
 
         } else {
-            if (true) {
-
-                getNearbyPlaces(mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(), mPersistentStorage.getRadiusFromCache());
-
-            } else {
-                //As soon as callback triggered network call will be dispatched.
-                getViewState().setListTitle("Waiting for GPS");
-                mLocRepository.subscribeToLocUpdates(mLocListener);
-            }
-
+            mHandler.postDelayed(mReceiveLocUpdateTimeout, 5000);
+            getViewState().setListTitle("Waiting for GPS");
+            getViewState().toggleLoadingView(true);
+            mLocRepository.subscribeToLocUpdates(mLocListener);
         }
-
     }
 
-    LocListener mLocListener = new LocListener();
-
     private class LocListener implements LocationListener {
-
         @Override
         public void onLocationChanged(Location location) {
-
-            getNearbyPlaces(String.format("%s,%s", location.getLatitude(), location.getLongitude()), mPersistentStorage.getRadiusFromCache());
-
+            mHandler.removeCallbacks(mReceiveLocUpdateTimeout);
             mLocRepository.unsubscribeFromLocUpdates(mLocListener);
-
+            mPersistentStorage.addLocationToCache(new LocationEntity(location.getLatitude(), location.getLongitude()));
+            getNearbyPlaces(String.format("%s,%s", location.getLatitude(), location.getLongitude()), String.valueOf(mPersistentStorage.getAreaFromCache()));
         }
     }
 

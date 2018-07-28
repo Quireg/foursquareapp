@@ -3,12 +3,15 @@ package ua.in.quireg.foursquareapp.mvp.presenters;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
+import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
 
 /**
  * Created by Arcturus Mengsk on 1/23/2018, 9:40 PM.
@@ -21,6 +24,7 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
     @Inject MainRouter mRouter;
     @Inject FoursquareApplication mFoursquareApplication;
     @Inject QueryFilter mQueryFilter;
+    @Inject PersistentStorage mPersistentStorage;
 
     public FilterScreenPresenter() {
         super();
@@ -59,6 +63,7 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
 
     public void resetLocation() {
         mQueryFilter.setLocation(null);
+        mQueryFilter.setSearchArea(QueryFilter.SEARCH_AREA_DEFAULT);
         updateUI();
     }
 
@@ -67,9 +72,19 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
         getViewState().toggleRelevance(mQueryFilter.getSortType() == QueryFilter.SORT_TYPE_RELEVANCE);
 
         if (mQueryFilter.getLocation() == null) {
-            getViewState().setLocation("Your current location");
+            getViewState().setLocation(String.format(
+                    Locale.getDefault(),
+                    "GPS location:\n %s\nArea: %d2m",
+                    mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
+                    mPersistentStorage.getAreaFromCache()
+            ));
         } else {
-            getViewState().setLocation(mQueryFilter.getLocation().getLatLonCommaSeparated());
+            getViewState().setLocation(String.format(
+                    Locale.getDefault(),
+                    "Custom location:\n %s\nArea: %dm",
+                    mQueryFilter.getLocation().getLatLonCommaSeparated(),
+                    mQueryFilter.getSearchArea()
+            ));
         }
 
     }

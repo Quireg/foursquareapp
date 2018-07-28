@@ -41,8 +41,15 @@ public class LocationEntity {
     }
 
     public String getLatLonCommaSeparated() {
-        return String.format("%s,%s", getLat(), getLon());
+        return String.format("%.4f, %.4f", getLat(), getLon());
     }
 
-
+    @Override
+    public String toString() {
+        return "LocationEntity{" +
+                "lat=" + lat +
+                ", lon=" + lon +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }
