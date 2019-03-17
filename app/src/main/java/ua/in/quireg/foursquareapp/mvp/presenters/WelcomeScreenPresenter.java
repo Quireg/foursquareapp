@@ -26,11 +26,8 @@ import ua.in.quireg.foursquareapp.mvp.views.WelcomeView;
 @InjectViewState
 public class WelcomeScreenPresenter extends MvpPresenter<WelcomeView> {
 
-    @Inject
-    FoursquareApplication mFoursquareApplication;
-
-    @Inject
-    MainRouter mRouter;
+    @Inject MainRouter mRouter;
+    @Inject FoursquareApplication mFoursquareApplication;
 
     private final int CLOUD_IN_ANIM_DURATION = 2000;
     private final int FRAGMENT_IN_ANIM_DURATION = 300;
@@ -51,7 +48,6 @@ public class WelcomeScreenPresenter extends MvpPresenter<WelcomeView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-
     }
 
     @Override
@@ -59,28 +55,21 @@ public class WelcomeScreenPresenter extends MvpPresenter<WelcomeView> {
         super.attachView(view);
 
         if (shouldAnimate) {
-
             completeWithDelay(showCloud(), FRAGMENT_IN_ANIM_DURATION);
 
             if (PermissionManager.verifyPermissions(mFoursquareApplication.getApplicationContext())) {
-
                 completeWithDelay(setReadyState(), CLOUD_IN_ANIM_DURATION);
             } else {
-
                 completeWithDelay(setPermissionsRequiredState(), CLOUD_IN_ANIM_DURATION);
             }
             shouldAnimate = false;
-
         } else {
-
             getViewState().animateEnterFragment(CLOUD_IN_ANIM_DURATION);
-
             if (PermissionManager.verifyPermissions(mFoursquareApplication.getApplicationContext())) {
                 getViewState().setReadyState();
             } else {
                 getViewState().setPermissionsRequiredState();
             }
-
         }
     }
 
@@ -117,11 +106,9 @@ public class WelcomeScreenPresenter extends MvpPresenter<WelcomeView> {
                 Timber.e(e);
             }
         };
-
     }
 
     private CompletableObserver setReadyState() {
-
         return new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {

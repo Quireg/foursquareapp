@@ -1,5 +1,7 @@
 package ua.in.quireg.foursquareapp.models;
 
+import android.annotation.SuppressLint;
+
 import java.util.Locale;
 
 /**
@@ -42,8 +44,9 @@ public class LocationEntity {
         this.address = address;
     }
 
+    @SuppressLint("DefaultLocale") /*do not remove*/
     public String getLatLonCommaSeparated() {
-        return String.format(Locale.getDefault(), "%.4f, %.4f", getLat(), getLon());
+        return String.format("%.4f, %.4f", getLat(), getLon());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +42,7 @@ import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.models.LocationEntity;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
+import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 
 import static ua.in.quireg.foursquareapp.FoursquareApplication.DEFAULT_SEARCH_RADIUS;
 import static ua.in.quireg.foursquareapp.FoursquareApplication.EQUATORIAL_CIRCUMFERENCE;
@@ -184,6 +186,7 @@ public class MapViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.location_picker_screen_title);
     }
 
     @Override

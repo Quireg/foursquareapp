@@ -8,7 +8,6 @@
     android:paddingBottom="4dp"
     android:orientation="horizontal">
 
-
     <FrameLayout
         android:id="@+id/icon_container"
         android:layout_width="0dp"

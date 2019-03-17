@@ -195,9 +195,12 @@ public class QueryFilter {
             locationEntity.setAddress(address);
         }
 
-        int area = sharedPreferences.getInt(PREFS_AREA, defaultQueryFilter.getSearchArea());
-        int sortType = sharedPreferences.getInt(PREFS_SORT_TYPE, defaultQueryFilter.getSortType());
-        int priceTier = sharedPreferences.getInt(PREFS_PRICE_TIER, defaultQueryFilter.getPriceTierFilter());
+        int area = sharedPreferences
+                .getInt(PREFS_AREA, defaultQueryFilter.getSearchArea());
+        int sortType = sharedPreferences
+                .getInt(PREFS_SORT_TYPE, defaultQueryFilter.getSortType());
+        int priceTier = sharedPreferences
+                .getInt(PREFS_PRICE_TIER, defaultQueryFilter.getPriceTierFilter());
 
         return QueryFilter.buildNew()
                 .setSortType(sortType)

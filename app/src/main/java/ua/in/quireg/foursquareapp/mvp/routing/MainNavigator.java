@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -47,19 +49,16 @@ public class MainNavigator implements Navigator {
 
     @Override
     public void applyCommand(Command command) {
-
         if (command instanceof SendShortToast) {
             sendShortToast(((SendShortToast) command).getToast());
         }
 
         if (command instanceof NavigatePlacesListScreen) {
             navigatePlacesList();
-            mActivity.getSupportActionBar().setTitle(R.string.app_name);
         }
 
         if (command instanceof NavigateWelcomeScreen) {
             navigateWelcomeScreen();
-            mActivity.getSupportActionBar().setTitle(R.string.not_a_title);
         }
 
         if (command instanceof RequestPermissions) {
@@ -75,7 +74,6 @@ public class MainNavigator implements Navigator {
         }
         if (command instanceof NavigateFilterScreen) {
             navigateFilterScreen();
-            mActivity.getSupportActionBar().setTitle(R.string.filter_screen_title);
         }
         if (command instanceof NavigateLocationPickerScreen) {
             navigateLocationPickerScreen();
@@ -83,7 +81,6 @@ public class MainNavigator implements Navigator {
         if (command instanceof NavigatePlaceScreen) {
             navigatePlaceScreen(((NavigatePlaceScreen) command).getId());
         }
-
     }
 
     public void sendShortToast(int stringId) {
@@ -99,24 +96,26 @@ public class MainNavigator implements Navigator {
     }
 
     public void showError(String errorText) {
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(mActivity);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(mActivity);
 
-        builder.setTitle(R.string.oh_error)
-                .setMessage(errorText)
-                .setNegativeButton(R.string.error_copy_button, (dialog, which) -> {
+            builder.setTitle(R.string.oh_error)
+                    .setMessage(errorText)
+                    .setNegativeButton(R.string.error_copy_button, (dialog, which) -> {
+                        ClipboardManager clipboard = (ClipboardManager) mActivity
+                                .getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            clipboard.setPrimaryClip(ClipData.newPlainText("Error", errorText));
+                            sendShortToast(R.string.error_done_text);
+                        }
+                    })
+                    .setPositiveButton(R.string.error_ok_button, (dialog, which) -> {
 
-                    ClipboardManager clipboard = (ClipboardManager) mActivity.getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    if (clipboard != null) {
-                        clipboard.setPrimaryClip(ClipData.newPlainText("Error", errorText));
-                        sendShortToast(R.string.error_done_text);
-                    }
-                })
-                .setPositiveButton(R.string.error_ok_button, (dialog, which) -> {
-
-                })
-                .setIcon(R.drawable.sad_cloud)
-                .show();
+                    })
+                    .setIcon(R.drawable.sad_cloud)
+                    .show();
+        });
     }
 
     public void navigateWelcomeScreen() {
@@ -130,31 +129,34 @@ public class MainNavigator implements Navigator {
                 .replace(R.id.fragment_container, new PlacesListFragment())
                 .addToBackStack(null)
                 .commit();
-
     }
 
     public void navigateFilterScreen() {
-
         FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction()
                 .setCustomAnimations(
-                        R.animator.frag_enter_up_down, //fragment entering
-                        0, //fragment leaving
-                        0, //fragment returning
-                        R.animator.frag_exit_down_up //fragment leaving
+                        R.animator.frag_enter_right_left,
+                        R.animator.frag_exit_right_left,
+                        R.animator.frag_enter_pop_left_right,
+                        R.animator.frag_exit_pop_left_right
                 )
                 .replace(R.id.fragment_container, new FilterFragment())
                 .addToBackStack(null);
         ft.commit();
-
     }
 
     public void navigateLocationPickerScreen() {
         FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction()
+//                .setCustomAnimations(
+//                        R.animator.frag_enter_up_down, //fragment entering
+//                        0, //fragment leaving
+//                        0, //fragment returning
+//                        R.animator.frag_exit_down_up //fragment leaving
+//                )
                 .setCustomAnimations(
-                        R.animator.frag_enter_up_down, //fragment entering
-                        0, //fragment leaving
-                        0, //fragment returning
-                        R.animator.frag_exit_down_up //fragment leaving
+                        R.animator.frag_enter_right_left,
+                        R.animator.frag_exit_right_left,
+                        R.animator.frag_enter_pop_left_right,
+                        R.animator.frag_exit_pop_left_right
                 )
                 .replace(R.id.fragment_container, new MapViewFragment())
                 .addToBackStack(null);

@@ -11,12 +11,17 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.google.android.gms.location.LocationListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
@@ -25,6 +30,7 @@ import ua.in.quireg.foursquareapp.common.PermissionManager;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.domain.PlacesListInteractor;
 import ua.in.quireg.foursquareapp.models.LocationEntity;
+import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
@@ -55,6 +61,8 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
             mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
             String.valueOf(mPersistentStorage.getAreaFromCache())
     );
+    private List<PlaceEntity> mPlacesAroundList = new ArrayList<>();
+    private List<PlaceEntity> mPlacesFromSearchList = new ArrayList<>();
 
     public PlacesListPresenter() {
         super();
@@ -72,53 +80,107 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     }
 
     @Override
+    public void detachView(PlacesListView view) {
+        super.detachView(view);
+        mCompositeDisposable.clear();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mCompositeDisposable.clear();
     }
 
     public void onSearchRequest(Observable<String> stringObservable) {
-        Disposable disposable = stringObservable
+        stringObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(s -> !s.isEmpty())
                 .filter(s1 -> checkPreconditions())
                 .map(q -> {
                     getViewState().setListTitle(String.format(
                             mFoursquareApplication.getString(R.string.search_list_title), q));
-                    getViewState().clear();
                     return q;
                 })
                 .switchMap(query -> mPlacesListInteractor
-                        .getNearbyPlaces(
+                        .getPlaces(
                                 query,
                                 mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
                                 String.valueOf(mPersistentStorage.getAreaFromCache()),
-                                DEFAULT_LIMIT
-                        )
-                        .doOnComplete(() -> getViewState().toggleLoadingView(false))
+                                DEFAULT_LIMIT)
+                        .map(placeEntity -> {
+                            Timber.d("Thread: %s", Thread.currentThread().getName());
+                            return placeEntity;
+                        })
+                        .subscribeOn(Schedulers.io())
                 )
-                .subscribe(
-                        next -> getViewState().addToList(next),
-                        error -> {
-                            getViewState().toggleLoadingView(false);
-                            mRouter.showErrorDialog(error.getLocalizedMessage());
-                        },
-                        () -> getViewState().toggleLoadingView(false)
-                );
-        mCompositeDisposable.add(disposable);
+                .map(placeEntity -> {
+                    mPlacesFromSearchList.add(placeEntity);
+                    return placeEntity;
+                })
+                .toList()
+                .toObservable()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(mPlacesAroundObserver);
+    }
+
+    private void getNearbyPlaces(String lonLatCommaSeparated, String radius) {
+        mPlacesListInteractor
+                .getPlaces(null, lonLatCommaSeparated, radius, DEFAULT_LIMIT)
+                .observeOn(AndroidSchedulers.mainThread())
+                .toList()
+                .toObservable()
+                .map(items -> {
+                    mPlacesAroundList.clear();
+                    mPlacesAroundList.addAll(items);
+                    return items;
+                })
+                .subscribeOn(Schedulers.io())
+                .subscribe(mPlacesAroundObserver);
     }
 
     public void onSearchCanceled() {
-        startNegotiation();
+        Observable.just(mPlacesAroundList)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(mPlacesAroundObserver);
     }
+
+    private Observer<List<PlaceEntity>> mPlacesAroundObserver = new Observer<List<PlaceEntity>>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+            getViewState().setListTitle(
+                    mFoursquareApplication.getString(R.string.looading));
+            mCompositeDisposable.add(d);
+        }
+
+        @Override
+        public void onNext(List<PlaceEntity> placeEntities) {
+            getViewState().clearList();
+            getViewState().setList(placeEntities);
+        }
+
+        @Override
+        public void onError(Throwable error) {
+            Timber.e(error);
+            mRouter.showErrorDialog(error.getMessage());
+            getViewState().toggleLoadingView(false);
+            getViewState().setListTitle(
+                    mFoursquareApplication.getString(R.string.something_went_wrong));
+        }
+
+        @Override
+        public void onComplete() {
+            getViewState().setListTitle(
+                    mFoursquareApplication.getString(R.string.default_list_title));
+            getViewState().toggleLoadingView(false);
+        }
+    };
 
     public void startNegotiation() {
         if (!checkPreconditions()) {
             return;
         }
         if (mQueryFilter.getLocation() != null && !mFoursquareApplication.isMockLocation()) {
-            getNearbyPlaces(
-                    mQueryFilter.getLocation().getLatLonCommaSeparated(),
+            getNearbyPlaces(mQueryFilter.getLocation().getLatLonCommaSeparated(),
                     String.valueOf(mQueryFilter.getSearchArea()));
         } else {
             mHandler.postDelayed(mReceiveLocUpdateTimeout, REQ_LOCATION_UPDATE_TIMEOUT);
@@ -141,26 +203,6 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
         }
     }
 
-    private void getNearbyPlaces(String lonLatCommaSeparated, String radius) {
-        getViewState().clear();
-        getViewState().setListTitle(mFoursquareApplication.getString(R.string.default_list_title));
-
-        mCompositeDisposable.clear();
-        mCompositeDisposable.add(
-                mPlacesListInteractor
-                        .getNearbyPlaces(null, lonLatCommaSeparated, radius, DEFAULT_LIMIT)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                next -> getViewState().addToList(next),
-                                error -> {
-                                    Timber.e(error);
-                                    getViewState().toggleLoadingView(false);
-                                    mRouter.showErrorDialog(error.getLocalizedMessage());
-                                },
-                                () -> getViewState().toggleLoadingView(false)
-                        )
-        );
-    }
 
     public boolean checkPreconditions() {
         getViewState().toggleLoadingView(true);

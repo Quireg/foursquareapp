@@ -14,6 +14,7 @@ import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
 import ua.in.quireg.foursquareapp.ui.fragments.MapViewFragment;
+import ua.in.quireg.foursquareapp.ui.fragments.PlacesListFragment;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 3:51 PM.
@@ -45,5 +46,7 @@ public interface AppComponent {
     void inject(WelcomeScreenPresenter i);
 
     void inject(PersistentStorageImpl i);
+
+    void inject(PlacesListFragment i);
 
 }

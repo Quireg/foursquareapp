@@ -8,5 +8,4 @@ import ru.terrakok.cicerone.commands.Command;
  */
 
 public class NavigateFilterScreen implements Command {
-
 }

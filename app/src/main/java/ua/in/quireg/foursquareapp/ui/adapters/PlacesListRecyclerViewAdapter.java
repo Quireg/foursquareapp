@@ -2,10 +2,15 @@ package ua.in.quireg.foursquareapp.ui.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,9 +18,18 @@ import com.bumptech.glide.Glide;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
@@ -35,19 +49,21 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     private static final int TYPE_ITEM = 1;
 
     private Context mContext;
-    private List<PlaceEntity> mItemsList = new LinkedList<>();
+    private final List<PlaceEntity> mItemsList = new LinkedList<>();
+    private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     //Header is disabled for now. Using different implementation
     private static final int HEADERS_COUNT = 0;
+    private int mLastPosition = -1;
 
     public PlacesListRecyclerViewAdapter(Context context) {
         FoursquareApplication.getAppComponent().inject(this);
         mContext = context;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_HEADER: {
                 View itemView = LayoutInflater.from(parent.getContext())
@@ -63,65 +79,47 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
                 throw new RuntimeException("Unknown view type");
             }
         }
-
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         position = position - HEADERS_COUNT;
+        setAnimation(holder.itemView, position);
 
         if (holder instanceof ListHeaderViewHolder) {
             ((ListHeaderViewHolder) holder).title.setText("");
         }
-
         if (holder instanceof PlaceEntityViewHolder) {
-
             PlaceEntity placeEntity = mItemsList.get(position);
-
             holder.itemView.setOnClickListener(v -> mRouter.placeScreen(placeEntity.getId()));
-
             ((PlaceEntityViewHolder) holder).title.setText(
                     placeEntity.getName()
             );
-
             ((PlaceEntityViewHolder) holder).type_and_priceCategory.setText(
                     String.format("%s, %s", placeEntity.getType(), placeEntity.getPriceCategory())
             );
-
             if (placeEntity.getAddress().isEmpty()) {
                 ((PlaceEntityViewHolder) holder).distance_and_address.setText(
                         String.format(
-                                "%s steps away",
-                                convertMetersIntoSteps(placeEntity.getDistanceTo()
-                                )
-                        )
-                );
+                                "%s steps away", convertMetersIntoSteps(placeEntity.getDistanceTo())));
             } else {
                 ((PlaceEntityViewHolder) holder).distance_and_address.setText(
-                        String.format(
-                                "%s steps away%s",
+                        String.format("%s steps away%s",
                                 convertMetersIntoSteps(placeEntity.getDistanceTo()),
-                                String.format(" at %s", placeEntity.getAddress())
-                        )
-                );
+                                String.format(" at %s", placeEntity.getAddress())));
             }
-
             ((PlaceEntityViewHolder) holder).rating.setText(
-                    placeEntity.getRating()
-            );
+                    placeEntity.getRating());
 
             ((PlaceEntityViewHolder) holder).rating.setTextColor(
-                    Color.parseColor(placeEntity.getRatingColor())
-            );
+                    Color.parseColor(placeEntity.getRatingColor()));
 
             if (placeEntity.getImageUri() != null) {
                 Glide.with(mContext)
                         .load(placeEntity.getImageUri())
                         .into(((PlaceEntityViewHolder) holder).image);
             }
-
         }
-
     }
 
     @Override
@@ -132,25 +130,42 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     @Override
     public int getItemViewType(int position) {
         //if (position == 0) return TYPE_HEADER;
-
         return TYPE_ITEM;
     }
 
     public void clearList() {
-        int itemCount = getItemCount();
-        if (itemCount > 0) {
-            mItemsList.clear();
-            notifyItemRangeRemoved(0, itemCount);
+        synchronized (mItemsList) {
+            int itemCount = getItemCount();
+            if (itemCount > 0) {
+                mItemsList.clear();
+                mLastPosition = 0;
+                notifyItemRangeRemoved(0, itemCount);
+            }
         }
     }
 
-    public void updateListHeader(String title) {
-        notifyItemInserted(0);
+    public void addAll(List<PlaceEntity> entities) {
+        Disposable d = Observable.fromIterable(entities)
+                                    .doOnNext(l -> {
+                                        synchronized (mItemsList) {
+                                            new Handler(Looper.getMainLooper()).post(() -> {
+                                                int position = mItemsList.size();
+                                                mItemsList.add(position, l);
+                                                notifyItemInserted(position);
+                                            });
+                                        }
+                                    })
+                                    .subscribe();
+        mCompositeDisposable.add(d);
     }
 
-    public void addToList(PlaceEntity entity) {
-        mItemsList.add(entity);
-        notifyItemInserted(getItemCount());
+    private void setAnimation(View viewToAnimate, int position) {
+        //If the bound view wasn't previously displayed on screen, it's animated
+        if (position > mLastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            mLastPosition = position;
+        }
     }
 
     class PlaceEntityViewHolder extends RecyclerView.ViewHolder {
@@ -165,7 +180,6 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
             type_and_priceCategory = view.findViewById(R.id.places_list_type_and_priceCategory);
             distance_and_address = view.findViewById(R.id.places_list_distance_and_address);
             rating = view.findViewById(R.id.places_list_rating);
-
         }
     }
 
@@ -182,5 +196,4 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     private String convertMetersIntoSteps(String meters) {
         return String.valueOf(Math.round(Integer.parseInt(meters) * 1.5));
     }
-
 }

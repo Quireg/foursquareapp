@@ -27,6 +27,7 @@ import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.Utils;
 import ua.in.quireg.foursquareapp.mvp.presenters.WelcomeScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.WelcomeView;
+import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 
 /**
  * Created by Arcturus Mengsk on 2/4/2018, 5:45 PM.
@@ -89,30 +90,30 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
     @Override
     public void setReadyState() {
         AnimatorSet animatorSet = new AnimatorSet();
-
-        animatorSet.play(animateText(R.string.permission_ok_text, false))
+        animatorSet
+                .play(animateText(R.string.permission_ok_text, false))
                 .before(animateToggleViewVisibility(mLookAroundButton, true));
-
         animatorSet.start();
     }
 
     @Override
     public void setPermissionsRequiredState() {
-
         AnimatorSet animatorSet = new AnimatorSet();
-
         animatorSet.play(animateText(R.string.permission_required_text, false))
                 .before(animateToggleViewVisibility(mRequestPermissionsButton, true));
-
         animatorSet.start();
     }
 
-    public Animator animateText(int resId, boolean append) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.not_a_title);
+    }
 
+    public Animator animateText(int resId, boolean append) {
         if (!append) {
             mWelcomeText.setText("");
         }
-
         int pauseBetweenLetters = 50;
 
         final String[] lettersArray = getResources().getString(resId).split("");
@@ -129,12 +130,10 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
         textAnimator.setDuration(pauseBetweenLetters * lettersArray.length);
 
         Animator.AnimatorListener animatorListener = new Animator.AnimatorListener() {
-
             Disposable d = null;
 
             @Override
             public void onAnimationStart(Animator animation) {
-
                 d = textEmitObservable.subscribe(
                         s -> mWelcomeText.setText(String.format("%s%s", mWelcomeText.getText(), s)),
                         t -> animation.end(),
@@ -160,7 +159,6 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
         textAnimator.addListener(animatorListener);
 
         return textAnimator;
-
     }
 
     private Animator animateToggleViewVisibility(View v, boolean visible) {
@@ -173,46 +171,41 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
 
         final float WAVE_AMPLITUDE = 192f;
 
-        final int OFFSCREEN_OFFSET_X = Utils.getDisplaySize(getActivity().getApplicationContext()).x * -1;
+        final int OFFSCREEN_OFFSET_X =
+                Utils.getDisplaySize(getActivity().getApplicationContext()).x * -1;
 
         //Set initial offset behind the screen
         mCloudImageView.setX(OFFSCREEN_OFFSET_X);
 
-        ObjectAnimator cloudAnimVisibility = ObjectAnimator.ofArgb(mCloudImageView, "visibility", 0, 1);
+        ObjectAnimator cloudAnimVisibility =
+                ObjectAnimator.ofArgb(mCloudImageView, "visibility", 0, 1);
 
         //Animate cloud movement
         ValueAnimator cloudMoveAnim = ValueAnimator.ofInt(0, 1).setDuration(duration);
 
         cloudMoveAnim.addUpdateListener(animation -> {
-
             int translX = (int) (OFFSCREEN_OFFSET_X * (1 - animation.getAnimatedFraction()));
-
             int translY = (int) (WAVE_AMPLITUDE * Math.sin(animation.getAnimatedFraction() * Math.PI * 2));
 
             if (mCloudImageView != null) {
                 mCloudImageView.setTranslationX(translX);
                 mCloudImageView.setTranslationY(translY);
             }
-
         });
-
         animatorSet.play(cloudMoveAnim).after(cloudAnimVisibility);
-
         return animatorSet;
     }
 
     private Animator animateCloudOut(int duration) {
-
         AnimatorSet animatorSet = new AnimatorSet();
-
-        final int OFFSCREEN_OFFSET_X = -1 * Utils.getDisplaySize(getActivity().getApplicationContext()).x;
-
-        ObjectAnimator cloudAnimMoveOut = ObjectAnimator.ofFloat(mCloudImageView, "x", 0, OFFSCREEN_OFFSET_X).setDuration(duration);
-
-        ObjectAnimator cloudAnimVisibility = ObjectAnimator.ofArgb(mCloudImageView, "visibility", 1, 0);
-
+        final int OFFSCREEN_OFFSET_X = -1 * Utils.getDisplaySize(
+                getActivity().getApplicationContext()).x;
+        ObjectAnimator cloudAnimMoveOut = ObjectAnimator.ofFloat(
+                        mCloudImageView, "x", 0, OFFSCREEN_OFFSET_X)
+                        .setDuration(duration);
+        ObjectAnimator cloudAnimVisibility = ObjectAnimator.ofArgb(
+                mCloudImageView, "visibility", 1, 0);
         animatorSet.play(cloudAnimVisibility).after(cloudAnimMoveOut);
-
         return animatorSet;
     }
 

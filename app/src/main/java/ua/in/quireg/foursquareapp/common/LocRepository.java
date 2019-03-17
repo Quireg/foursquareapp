@@ -12,5 +12,4 @@ public interface LocRepository {
     void subscribeToLocUpdates(LocationListener l);
 
     void unsubscribeFromLocUpdates(LocationListener l);
-
 }

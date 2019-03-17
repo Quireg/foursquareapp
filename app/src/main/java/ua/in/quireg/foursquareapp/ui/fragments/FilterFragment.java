@@ -21,6 +21,7 @@ import butterknife.OnClick;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
+import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 
 /**
  * Created by Arcturus Mengsk on 1/23/2018, 5:42 PM.
@@ -75,6 +76,12 @@ public class FilterFragment extends MvpFragment implements FilterView {
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
         unbinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.filter_screen_title);
     }
 
     @OnClick(R.id.relevance_button)

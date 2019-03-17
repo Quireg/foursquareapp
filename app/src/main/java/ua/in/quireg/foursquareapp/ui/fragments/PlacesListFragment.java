@@ -1,8 +1,8 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,25 +13,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
+import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
+import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
 import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
 
@@ -48,16 +52,20 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @BindView(R.id.header_textview) protected TextView mHeaderView;
     @BindView(R.id.shadowline) protected View mShadowLine;
     @BindView(R.id.progress_bar) protected ProgressBar mProgressBar;
+    @BindView(R.id.main_layout) protected RelativeLayout mLayout;
 
-    @InjectPresenter(type = PresenterType.WEAK)
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int SEARCH_QUERY_DEBOUNCE_TIMEOUT = 2000;
+
+    @InjectPresenter(type = PresenterType.GLOBAL)
     PlacesListPresenter mPlacesListPresenter;
-    PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
     @Inject SharedPreferences mSharedPreferences;
-
-    private final int SEARCH_QUERY_DEBOUNCE_TIMEOUT = 100; //ms
+    PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        FoursquareApplication.getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mPlacesListRecyclerViewAdapter = new PlacesListRecyclerViewAdapter(getActivity());
@@ -91,18 +99,23 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
-
         unbinder = ButterKnife.bind(this, view);
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new LeftPaddedDivider(getActivity()));
         mRecyclerView.setAdapter(mPlacesListRecyclerViewAdapter);
-
         return view;
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+    }
+
+    @Override
     public void setListTitle(String title) {
+        Timber.d("setListTitle(%s)", title);
+
         if (mShadowLine.getVisibility() != View.VISIBLE) {
             mShadowLine.setVisibility(View.VISIBLE);
         }
@@ -110,90 +123,99 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     }
 
     @Override
-    public void addToList(PlaceEntity place) {
+    public void setList(List<PlaceEntity> places) {
+        Timber.d("setList()");
         if (mShadowLine.getVisibility() != View.VISIBLE) {
             mShadowLine.setVisibility(View.VISIBLE);
         }
-        mPlacesListRecyclerViewAdapter.addToList(place);
+        mPlacesListRecyclerViewAdapter.addAll(places);
     }
 
     @Override
-    public void clear() {
+    public void clearList() {
+        Timber.d("clearList()");
         mPlacesListRecyclerViewAdapter.clearList();
         mShadowLine.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void toggleLoadingView(boolean visible) {
+        Timber.d("toggleLoadingView(%b)", visible);
         mProgressBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void initMenuMockLoc(MenuItem mockLoc) {
-        boolean active = mSharedPreferences.getBoolean(PREF_MOC_LOC_KEY, false);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mCompositeDisposable.clear();
+    }
 
-        mockLoc.setChecked(active);
+    private void initMenuMockLoc(MenuItem mockLoc) {
+        mockLoc.setChecked(mSharedPreferences.getBoolean(PREF_MOC_LOC_KEY, false));
         mockLoc.setOnMenuItemClickListener(item -> {
             SharedPreferences.Editor editor = mSharedPreferences.edit();
-            if (item.isChecked()) {
-                editor.putBoolean(PREF_MOC_LOC_KEY, true);
-            } else {
-                editor.putBoolean(PREF_MOC_LOC_KEY, false);
-            }
-            item.setChecked(!item.isChecked());
-            Timber.d("Mock location enabled: " + item.isChecked());
+            boolean newState = !item.isChecked();
+            item.setChecked(newState);
+            editor.putBoolean(PREF_MOC_LOC_KEY, newState);
             editor.apply();
-            return false;
+            return true;
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initMenuSearch(MenuItem searchViewItem) {
         SearchView searchView = (SearchView) searchViewItem.getActionView();
+
+        mRecyclerView.setOnTouchListener((v, event) -> {
+            //remove keyboard when user scrolls recyclerView
+            if (searchView.hasFocus()) searchView.clearFocus();
+            return false;
+        });
         int id = searchView.getContext().getResources()
                 .getIdentifier("android:id/search_src_text", null, null);
-
         searchView.findViewById(id).setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) searchView.setIconified(true);
+            if (!hasFocus && searchView.getQuery().length() == 0) {
+                //In case focus lost and no input provided - close searchView
+                searchView.setIconified(true);
+            }
+        });
+        searchView.setOnCloseListener(() -> {
+            mPlacesListPresenter.onSearchCanceled();
+            return false;
         });
 
-        Observable<String> stringObservable = Observable.defer(
-                () -> Observable.create(
-                        searchRequested -> {
-                            Disposable disposable = Observable.create(searchTextChanged -> {
+        PublishSubject<String> onQueryChangedSubject = PublishSubject.create();
+        PublishSubject<String> onQuerySubmitSubject = PublishSubject.create();
 
-                                searchView.setOnQueryTextListener(
-                                        new SearchView.OnQueryTextListener() {
-                                            @Override
-                                            public boolean onQueryTextSubmit(String s) {
-                                                searchRequested.onNext(s);
-                                                searchView.clearFocus();
-                                                return true;
-                                            }
-                                            @Override
-                                            public boolean onQueryTextChange(String s) {
-                                                searchTextChanged.onNext(s);
-                                                return true;
-                                            }
-                                        });
-                            })
-                                    .debounce(SEARCH_QUERY_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
-                                    .subscribe(searchRequested::onNext);
-                        })
-                        .cast(String.class)
-                        .distinctUntilChanged()
-        );
+        onQueryChangedSubject
+                .debounce(SEARCH_QUERY_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
+                .subscribe(onQuerySubmitSubject);
 
-        searchViewItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        onQuerySubmitSubject
+                .distinctUntilChanged()
+                .onErrorResumeNext(onQuerySubmitSubject)
+                .subscribe(onQueryChangedSubject);
+
+
+        SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                mPlacesListPresenter.onSearchRequest(stringObservable);
+            public boolean onQueryTextSubmit(String s) {
+                Timber.d("onQueryTextSubmit()");
+                Timber.d("onQueryTextSubmit(%s)", s);
+                onQuerySubmitSubject.onNext(s);
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                mPlacesListPresenter.onSearchCanceled();
+            public boolean onQueryTextChange(String s) {
+                mPlacesListPresenter.onSearchRequest(onQuerySubmitSubject);
+
+                Timber.d("onQueryTextChange(%s)", s);
+                onQueryChangedSubject.onNext(s);
                 return true;
             }
-        });
+        };
+        searchView.setOnQueryTextListener(listener);
     }
 }

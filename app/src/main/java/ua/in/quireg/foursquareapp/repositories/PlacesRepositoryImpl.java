@@ -2,6 +2,9 @@ package ua.in.quireg.foursquareapp.repositories;
 
 import android.support.v4.util.Pair;
 
+import java.util.Iterator;
+import java.util.function.Consumer;
+
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
@@ -24,22 +27,19 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         mFoursquareApi = retrofit.create(FoursquareApi.class);
     }
 
-    @Override
     public Observable<Pair<Venue, VenueExtended>> getPlaces(
             String latLonCommaSeparated, String query, String radius, String limit) {
-
         return mFoursquareApi
                 .executeSearchNearbyPlacesQuery(
                         latLonCommaSeparated, query, "browse", radius, limit)
-                .flatMap(respond ->
-                        Observable.fromIterable(respond.getResponse().getVenues())
-                                .flatMap(venue ->
-                                        mFoursquareApi
-                                                .executeObtainPlaceInfo(venue.getId())
-                                                .map(singleVenueRespond ->
-                                                        singleVenueRespond.getResponse().getVenue())
-                                                .map(venueExtended ->
-                                                        new Pair<>(venue, venueExtended)))
+                .flatMap(respond -> Observable.fromIterable(respond.getResponse().getVenues()))
+                .flatMap(venue ->
+                        mFoursquareApi
+                                .executeObtainPlaceInfo(venue.getId())
+                                .map(singleVenueRespond ->
+                                        singleVenueRespond.getResponse().getVenue())
+                                .map(venueExtended -> new Pair<>(venue, venueExtended))
+                                .onErrorResumeNext(Observable.empty())
                 );
     }
 
@@ -59,7 +59,6 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     @Override
     public Observable<Tips> getPlaceTips(String id, String offset) {
-
         return mFoursquareApi
                 .executeObtainPlaceTips(id, offset, TIPS_LIMIT)
                 .map(venueTipsRespond -> venueTipsRespond.getResponse().getTips());

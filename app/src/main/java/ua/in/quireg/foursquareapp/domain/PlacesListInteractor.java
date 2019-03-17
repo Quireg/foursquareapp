@@ -28,12 +28,10 @@ public class PlacesListInteractor {
         FoursquareApplication.getAppComponent().inject(this);
     }
 
-    public Observable<PlaceEntity> getNearbyPlaces(String query, String latLonCommaSeparated,
-                                                   String radius, String limit) {
+    public Observable<PlaceEntity> getPlaces(String query, String latLonCommaSeparated,
+                                             String radius, String limit) {
         return mPlacesRepository.getPlaces(latLonCommaSeparated, query, radius, limit)
-                .map(this::mapPlaceEntity)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .map(this::mapPlaceEntity);
     }
 
     private PlaceEntity mapPlaceEntity(Pair<Venue, VenueExtended> pair) {
@@ -44,14 +42,12 @@ public class PlacesListInteractor {
         VenueExtended venueExtended = pair.second;
 
         if (venue == null || venueExtended == null) {
-            Timber.e("received null response from api", new Exception("API error"));
+            Timber.e(new Exception("received null response from api"));
             return placeEntity;
         }
-
         if (venue.getId() != null) {
             placeEntity.setId(venue.getId());
         }
-
         if (venue.getName() != null) {
             placeEntity.setName(venue.getName());
         }
@@ -76,7 +72,6 @@ public class PlacesListInteractor {
         if (venueExtended.getLocation() != null && venueExtended.getLocation().getAddress() != null) {
             placeEntity.setAddress(venueExtended.getLocation().getAddress());
         }
-
         if (venueExtended.getBestPhoto() != null) {
             placeEntity.setImageUri(
                     venueExtended.getBestPhoto().getPrefix(),

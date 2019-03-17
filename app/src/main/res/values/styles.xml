@@ -1,19 +1,13 @@
 <resources>
 
     <style name="AppMaterialTheme" parent="Theme.AppCompat.Light">
-        <item name="fontFamily">sans-serif-thin</item>
+        <item name="fontFamily">sans-serif-condensed</item>
         <item name="toolbarStyle">@style/App.ToolBar</item>
     </style>
 
     <style name="App.ToolBar" parent="Widget.AppCompat.Toolbar">
         <item name="title">@string/app_name</item>
         <item name="navigationIcon">@drawable/ic_logo2</item>
-        <item name="titleTextAppearance">@style/App.ToolBar.Title</item>
-    </style>
-
-    <style name="App.ToolBar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
     </style>
 
 </resources>
