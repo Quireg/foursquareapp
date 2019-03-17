@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/relevance"
-                    tools:checked="true"/>
+                    tools:checked="true" />
 
                 <RadioButton
                     android:id="@+id/distance_button"
@@ -59,7 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/distance"/>
+                    android:text="@string/distance" />
 
                 <!--<ToggleButton-->
                 <!--style="?android:attr/buttonBarButtonStyle"-->
@@ -175,7 +175,7 @@
                     android:textOff="@string/filter_screen_price4"
                     android:textOn="@string/filter_screen_price4"
                     android:textSize="24sp"
-                    tools:checked="true"/>
+                    tools:checked="true" />
             </LinearLayout>
 
 

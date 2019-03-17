@@ -128,7 +128,6 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
 
         textAnimator.setDuration(pauseBetweenLetters * lettersArray.length);
 
-
         Animator.AnimatorListener animatorListener = new Animator.AnimatorListener() {
 
             Disposable d = null;
@@ -142,9 +141,20 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
                         animation::end
                 );
             }
-            @Override public void onAnimationEnd(Animator animation) { if(d != null) d.dispose(); }
-            @Override public void onAnimationCancel(Animator animation) { if(d != null) d.dispose();  }
-            @Override public void onAnimationRepeat(Animator animation) { }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (d != null) d.dispose();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (d != null) d.dispose();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
         };
 
         textAnimator.addListener(animatorListener);

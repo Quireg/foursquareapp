@@ -44,13 +44,13 @@ public class Utils {
         return ret;
     }
 
-    public static int convertPixelsToDp(float px){
+    public static int convertPixelsToDp(float px) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         float dp = px / (metrics.densityDpi / 160f);
         return Math.round(dp);
     }
 
-    public static int convertDpToPixel(float dp){
+    public static int convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return Math.round(px);
@@ -66,7 +66,7 @@ public class Utils {
 
     public static Point getDisplaySize(Context context) {
 
-        Point p = new Point(0,0);
+        Point p = new Point(0, 0);
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (wm != null) {

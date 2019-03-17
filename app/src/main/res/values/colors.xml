@@ -15,7 +15,7 @@
     <!--<color name="windowBackground">#EFEBE9</color>-->
     <!--<color name="colorPrimary">#607D8B</color>-->
     <!--<color name="colorPrimaryDark">#455A64</color>-->
-    <!--<color name="colorAccent">#009688</color>-->
+    <color name="colorAccent">#009688</color>
 
     <!--<color name="white_background">#f4f4f4</color>-->
 

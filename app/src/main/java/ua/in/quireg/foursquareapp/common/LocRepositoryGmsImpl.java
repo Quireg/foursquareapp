@@ -21,14 +21,14 @@ import timber.log.Timber;
  * foursquareapp
  */
 
-public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
 
-    private Vector<LocationListener> mLocationlisteners = new Vector<>();
+    private Vector<LocationListener> mLocationListeners = new Vector<>();
 
     public LocRepositoryGmsImpl(Application app) {
-
         mGoogleApiClient = new GoogleApiClient.Builder(app.getApplicationContext())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -38,27 +38,23 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void subscribeToLocUpdates(LocationListener l) {
-
         synchronized (this) {
-            if (mLocationlisteners.contains(l)) {
+            if (mLocationListeners.contains(l)) {
                 Timber.w("This subscribe already receiving loc updates!");
                 return;
             }
-            mLocationlisteners.add(l);
+            mLocationListeners.add(l);
         }
-
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
-
     }
 
     @Override
     public void unsubscribeFromLocUpdates(LocationListener listener) {
         synchronized (this) {
-            mLocationlisteners.remove(listener);
-
-            if (mLocationlisteners.size() == 0) {
+            mLocationListeners.remove(listener);
+            if (mLocationListeners.size() == 0) {
                 mGoogleApiClient.disconnect();
             }
         }
@@ -72,7 +68,8 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000); // Update location every second
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        LocationServices.FusedLocationApi
+                .requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
@@ -82,16 +79,16 @@ public class LocRepositoryGmsImpl implements LocRepository, GoogleApiClient.Conn
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Timber.e("GoogleApiClient connection has failed: %s", connectionResult.getErrorMessage());
+        Timber.e("GoogleApiClient connection has failed: %s",
+                connectionResult.getErrorMessage());
     }
 
     @Override
     public void onLocationChanged(Location location) {
         synchronized (this) {
-            for (LocationListener locationListener : mLocationlisteners) {
+            for (LocationListener locationListener : mLocationListeners) {
                 locationListener.onLocationChanged(location);
             }
         }
     }
-
 }

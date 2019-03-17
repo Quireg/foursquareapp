@@ -48,4 +48,9 @@
     <string name="max_search_circle">10km</string>
     <string name="reset_location">Reset</string>
     <string name="set_location">Set</string>
+    <string name="waiting_for_gps">Waiting for GPS</string>
+    <string name="gps_location_filter_fragment">GPS location:\n %s \nArea: %d2m</string>
+    <string name="custom_location_filter_fragment">Custom location:\n %s \nArea: %dm</string>
+    <string name="map_view_fragment_save">Save</string>
+    <string name="use_mock_loc">Use mock loc</string>
 </resources>

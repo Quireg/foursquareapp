@@ -1,8 +1,6 @@
 package ua.in.quireg.foursquareapp.mvp.routing;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.ClipboardManager;

@@ -14,5 +14,4 @@ public interface PersistentStorage {
     void addLocationToCache(LocationEntity e);
 
     int getAreaFromCache();
-
 }

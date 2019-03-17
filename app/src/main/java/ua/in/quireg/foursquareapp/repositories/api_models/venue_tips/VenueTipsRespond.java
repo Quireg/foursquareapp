@@ -1,9 +1,9 @@
-
 package ua.in.quireg.foursquareapp.repositories.api_models.venue_tips;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class VenueTipsRespond {
 

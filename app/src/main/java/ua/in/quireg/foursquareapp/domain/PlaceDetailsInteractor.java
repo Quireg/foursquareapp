@@ -9,9 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
@@ -143,8 +141,8 @@ public class PlaceDetailsInteractor {
 
                 tipEntity.setAuthorImage(Uri.parse(
                         tips.getItems().get(i).getUser().getPhoto().getPrefix() +
-                        "100x100" +
-                        tips.getItems().get(i).getUser().getPhoto().getSuffix()
+                                "100x100" +
+                                tips.getItems().get(i).getUser().getPhoto().getSuffix()
                 ));
 
                 tipEntities.add(tipEntity);

@@ -1,6 +1,8 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,15 +21,21 @@ import com.arellomobile.mvp.presenter.PresenterType;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.views.PlacesListView;
 import ua.in.quireg.foursquareapp.ui.adapters.PlacesListRecyclerViewAdapter;
 import ua.in.quireg.foursquareapp.ui.views.LeftPaddedDivider;
+
+import static ua.in.quireg.foursquareapp.FoursquareApplication.PREF_MOC_LOC_KEY;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 4:09 PM.
@@ -38,19 +46,20 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
     @BindView(R.id.places_list) protected RecyclerView mRecyclerView;
     @BindView(R.id.header_textview) protected TextView mHeaderView;
-    @BindView(R.id.shadowline) protected View mShadowline;
+    @BindView(R.id.shadowline) protected View mShadowLine;
     @BindView(R.id.progress_bar) protected ProgressBar mProgressBar;
 
     @InjectPresenter(type = PresenterType.WEAK)
     PlacesListPresenter mPlacesListPresenter;
-
     PlacesListRecyclerViewAdapter mPlacesListRecyclerViewAdapter;
+    @Inject SharedPreferences mSharedPreferences;
+
+    private final int SEARCH_QUERY_DEBOUNCE_TIMEOUT = 100; //ms
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         mPlacesListRecyclerViewAdapter = new PlacesListRecyclerViewAdapter(getActivity());
     }
 
@@ -58,11 +67,8 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.search_menu, menu);
-
-        MenuItem searchViewItem = menu.findItem(R.id.search);
-
-        initMenuSearch(searchViewItem);
-
+        initMenuSearch(menu.findItem(R.id.search));
+        initMenuMockLoc(menu.findItem(R.id.mock_location));
     }
 
     @Override
@@ -82,8 +88,8 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_screen, container, false);
 
         unbinder = ButterKnife.bind(this, view);
@@ -97,16 +103,16 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
 
     @Override
     public void setListTitle(String title) {
-        if (mShadowline.getVisibility() != View.VISIBLE) {
-            mShadowline.setVisibility(View.VISIBLE);
+        if (mShadowLine.getVisibility() != View.VISIBLE) {
+            mShadowLine.setVisibility(View.VISIBLE);
         }
         mHeaderView.setText(title);
     }
 
     @Override
     public void addToList(PlaceEntity place) {
-        if (mShadowline.getVisibility() != View.VISIBLE) {
-            mShadowline.setVisibility(View.VISIBLE);
+        if (mShadowLine.getVisibility() != View.VISIBLE) {
+            mShadowLine.setVisibility(View.VISIBLE);
         }
         mPlacesListRecyclerViewAdapter.addToList(place);
     }
@@ -114,22 +120,36 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
     @Override
     public void clear() {
         mPlacesListRecyclerViewAdapter.clearList();
-        mShadowline.setVisibility(View.INVISIBLE);
+        mShadowLine.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void toggleLoadingView(boolean visible) {
-        if (visible) {
-            mProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
+        mProgressBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void initMenuMockLoc(MenuItem mockLoc) {
+        boolean active = mSharedPreferences.getBoolean(PREF_MOC_LOC_KEY, false);
+
+        mockLoc.setChecked(active);
+        mockLoc.setOnMenuItemClickListener(item -> {
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            if (item.isChecked()) {
+                editor.putBoolean(PREF_MOC_LOC_KEY, true);
+            } else {
+                editor.putBoolean(PREF_MOC_LOC_KEY, false);
+            }
+            item.setChecked(!item.isChecked());
+            Timber.d("Mock location enabled: " + item.isChecked());
+            editor.apply();
+            return false;
+        });
     }
 
     private void initMenuSearch(MenuItem searchViewItem) {
-
         SearchView searchView = (SearchView) searchViewItem.getActionView();
-        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        int id = searchView.getContext().getResources()
+                .getIdentifier("android:id/search_src_text", null, null);
 
         searchView.findViewById(id).setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) searchView.setIconified(true);
@@ -138,7 +158,7 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
         Observable<String> stringObservable = Observable.defer(
                 () -> Observable.create(
                         searchRequested -> {
-                            Observable.create(searchTextChanged -> {
+                            Disposable disposable = Observable.create(searchTextChanged -> {
 
                                 searchView.setOnQueryTextListener(
                                         new SearchView.OnQueryTextListener() {
@@ -148,18 +168,15 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
                                                 searchView.clearFocus();
                                                 return true;
                                             }
-
                                             @Override
                                             public boolean onQueryTextChange(String s) {
                                                 searchTextChanged.onNext(s);
                                                 return true;
                                             }
                                         });
-
                             })
-                                    .debounce(1000, TimeUnit.MILLISECONDS)
+                                    .debounce(SEARCH_QUERY_DEBOUNCE_TIMEOUT, TimeUnit.MILLISECONDS)
                                     .subscribe(searchRequested::onNext);
-
                         })
                         .cast(String.class)
                         .distinctUntilChanged()
@@ -178,7 +195,5 @@ public class PlacesListFragment extends MvpFragment implements PlacesListView {
                 return true;
             }
         });
-
     }
-
 }

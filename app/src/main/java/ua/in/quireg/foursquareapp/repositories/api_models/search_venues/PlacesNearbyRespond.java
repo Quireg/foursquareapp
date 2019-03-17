@@ -1,4 +1,3 @@
-
 package ua.in.quireg.foursquareapp.repositories.api_models.search_venues;
 
 import com.google.gson.annotations.Expose;

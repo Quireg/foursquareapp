@@ -185,18 +185,18 @@
             tools:layout="@layout/location_fragment" />
 
         <!--<TextView-->
-            <!--android:id="@+id/tips_section"-->
-            <!--style="@android:style/TextAppearance.Material.Subhead"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingEnd="8dp"-->
-            <!--android:paddingStart="8dp"-->
-            <!--android:text="@string/tips_header"-->
-            <!--android:visibility="invisible"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintStart_toStartOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@id/map"-->
-            <!--tools:visibility="invisible"/>-->
+        <!--android:id="@+id/tips_section"-->
+        <!--style="@android:style/TextAppearance.Material.Subhead"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingEnd="8dp"-->
+        <!--android:paddingStart="8dp"-->
+        <!--android:text="@string/tips_header"-->
+        <!--android:visibility="invisible"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/map"-->
+        <!--tools:visibility="invisible"/>-->
 
         <!--<View-->
         <!--android:id="@+id/shadowline3"-->

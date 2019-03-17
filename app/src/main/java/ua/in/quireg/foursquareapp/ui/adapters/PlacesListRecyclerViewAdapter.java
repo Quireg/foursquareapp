@@ -10,14 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import ru.terrakok.cicerone.Router;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.models.PlaceEntity;
@@ -116,7 +114,7 @@ public class PlacesListRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
                     Color.parseColor(placeEntity.getRatingColor())
             );
 
-            if(placeEntity.getImageUri() != null) {
+            if (placeEntity.getImageUri() != null) {
                 Glide.with(mContext)
                         .load(placeEntity.getImageUri())
                         .into(((PlaceEntityViewHolder) holder).image);

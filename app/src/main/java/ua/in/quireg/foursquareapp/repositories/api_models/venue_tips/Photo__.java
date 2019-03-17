@@ -1,4 +1,3 @@
-
 package ua.in.quireg.foursquareapp.repositories.api_models.venue_tips;
 
 import com.google.gson.annotations.Expose;

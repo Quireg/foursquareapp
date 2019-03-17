@@ -1,5 +1,7 @@
 package ua.in.quireg.foursquareapp.models;
 
+import java.util.Locale;
+
 /**
  * Created by Arcturus Mengsk on 1/23/2018, 7:36 PM.
  * foursquareapp
@@ -41,7 +43,7 @@ public class LocationEntity {
     }
 
     public String getLatLonCommaSeparated() {
-        return String.format("%.4f, %.4f", getLat(), getLon());
+        return String.format(Locale.getDefault(), "%.4f, %.4f", getLat(), getLon());
     }
 
     @Override

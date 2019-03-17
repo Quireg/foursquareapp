@@ -30,7 +30,7 @@
 
     <Button
 
-    android:id="@+id/request_permissions"
+        android:id="@+id/request_permissions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -38,8 +38,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="32dp"
         android:text="@string/grant_location_permissions_button"
-        android:visibility="invisible"
-        />
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/request_places"
@@ -50,12 +49,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="32dp"
         android:text="@string/proceed_to_places_list"
-        android:visibility="invisible"
-        />
+        android:visibility="invisible" />
     <!--style="@style/TextAppearance.App.Button"-->
 
     <!--android:background="@drawable/btn_colored_material"-->
-
 
 
 </RelativeLayout>

@@ -1,16 +1,13 @@
 package ua.in.quireg.foursquareapp.ui.fragments;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -22,10 +19,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -64,7 +58,6 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
     @BindView(R.id.root_scrollview) ScrollView mScrollView;
 
     private LayoutInflater mInflater;
-
 
     @ProvidePresenter(type = PresenterType.WEAK)
     PlaceDetailsPresenter providePlaceDetailsPresenter() {
@@ -112,7 +105,6 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         });
 
-
     }
 
     @Override
@@ -154,11 +146,9 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
             likes.setVisibility(View.VISIBLE);
         }
 
-
         Glide.with(getActivity().getApplicationContext())
                 .load(tip.getAuthorImage())
                 .into(authorImg);
-
 
         mTipsLinearLayout.addView(tipView);
     }
@@ -182,7 +172,6 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
             mTipsLinearLayout.setVisibility(View.INVISIBLE);
         }
     }
-
 
     public static PlaceDetailsFragment getNewInstance(String id) {
         PlaceDetailsFragment fragment = new PlaceDetailsFragment();

@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="invisible"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <View
         android:id="@+id/shadowline"
@@ -50,14 +50,14 @@
         tools:listitem="@layout/places_list_item" />
 
     <!--<ProgressBar-->
-        <!--style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_marginBottom="-6dp"-->
-        <!--android:layout_marginTop="-6dp"-->
-        <!--android:indeterminate="true"-->
-        <!--android:visibility="invisible" />-->
+    <!--style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginBottom="-6dp"-->
+    <!--android:layout_marginTop="-6dp"-->
+    <!--android:indeterminate="true"-->
+    <!--android:visibility="invisible" />-->
 
 </RelativeLayout>
 

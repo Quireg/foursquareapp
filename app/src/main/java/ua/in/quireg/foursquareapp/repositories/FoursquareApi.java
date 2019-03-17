@@ -17,7 +17,10 @@ import ua.in.quireg.foursquareapp.repositories.api_models.venue_tips.VenueTipsRe
 public interface FoursquareApi {
 
     @GET("venues/search")
-    Observable<PlacesNearbyRespond> executeSearchNearbyPlacesQuery(@Query("ll") String latLonCommaSeparated, @Query("query") String query, @Query("intent") String intent, @Query("radius") String radius, @Query("limit") String limit);
+    Observable<PlacesNearbyRespond> executeSearchNearbyPlacesQuery(
+            @Query("ll") String latLonCommaSeparated, @Query("query") String query,
+            @Query("intent") String intent, @Query("radius") String radius,
+            @Query("limit") String limit);
 
     @GET("venues/{venueId}")
     Observable<SingleVenueRespond> executeObtainPlaceInfo(@Path("venueId") String venueId);
@@ -26,5 +29,7 @@ public interface FoursquareApi {
     Observable<VenuePhotosRespond> executeObtainPlacePhotos(@Path("venueId") String venueId);
 
     @GET("venues/{venueId}/tips")
-    Observable<VenueTipsRespond> executeObtainPlaceTips(@Path("venueId") String venueId, @Query("offset") String offset, @Query("limit") String limit);
+    Observable<VenueTipsRespond> executeObtainPlaceTips(@Path("venueId") String venueId,
+                                                        @Query("offset") String offset,
+                                                        @Query("limit") String limit);
 }

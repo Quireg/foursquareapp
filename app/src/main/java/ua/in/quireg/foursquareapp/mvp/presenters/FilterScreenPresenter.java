@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ua.in.quireg.foursquareapp.FoursquareApplication;
+import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.QueryFilter;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 import ua.in.quireg.foursquareapp.mvp.views.FilterView;
@@ -74,18 +75,17 @@ public class FilterScreenPresenter extends MvpPresenter<FilterView> {
         if (mQueryFilter.getLocation() == null) {
             getViewState().setLocation(String.format(
                     Locale.getDefault(),
-                    "GPS location:\n %s\nArea: %d2m",
+                    mFoursquareApplication.getString(R.string.gps_location_filter_fragment),
                     mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
                     mPersistentStorage.getAreaFromCache()
             ));
         } else {
             getViewState().setLocation(String.format(
                     Locale.getDefault(),
-                    "Custom location:\n %s\nArea: %dm",
+                    mFoursquareApplication.getString(R.string.custom_location_filter_fragment),
                     mQueryFilter.getLocation().getLatLonCommaSeparated(),
                     mQueryFilter.getSearchArea()
             ));
         }
-
     }
 }

@@ -1,6 +1,5 @@
 package ua.in.quireg.foursquareapp.common;
 
-import android.content.Context;
 import android.content.res.Resources;
 
 import java.io.IOException;
@@ -28,6 +27,5 @@ public class ResourceManager {
     public Resources getResources() {
         return mApplication.getResources();
     }
-
 
 }

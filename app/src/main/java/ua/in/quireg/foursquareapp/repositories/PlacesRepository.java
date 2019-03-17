@@ -15,7 +15,8 @@ import ua.in.quireg.foursquareapp.repositories.api_models.venue_tips.Tips;
 
 public interface PlacesRepository {
 
-    Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String query, String radius, String limit);
+    Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String query,
+                                                     String radius, String limit);
 
     Observable<VenueExtended> getPlaceDetails(String id);
 

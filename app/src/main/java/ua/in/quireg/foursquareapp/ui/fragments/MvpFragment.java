@@ -28,7 +28,6 @@ public class MvpFragment extends Fragment {
         getMvpDelegate().onCreate(savedInstanceState);
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -73,7 +72,7 @@ public class MvpFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(unbinder != null) {
+        if (unbinder != null) {
             unbinder.unbind();
         }
 

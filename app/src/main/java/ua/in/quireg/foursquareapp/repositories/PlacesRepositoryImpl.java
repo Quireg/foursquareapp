@@ -3,7 +3,6 @@ package ua.in.quireg.foursquareapp.repositories;
 import android.support.v4.util.Pair;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
@@ -19,25 +18,28 @@ public class PlacesRepositoryImpl implements PlacesRepository {
 
     private static final String TIPS_LIMIT = "5";
 
-
     private FoursquareApi mFoursquareApi;
 
     public PlacesRepositoryImpl(Retrofit retrofit) {
         mFoursquareApi = retrofit.create(FoursquareApi.class);
-
     }
 
     @Override
-    public Observable<Pair<Venue, VenueExtended>> getPlaces(String latLonCommaSeparated, String query, String radius, String limit) {
+    public Observable<Pair<Venue, VenueExtended>> getPlaces(
+            String latLonCommaSeparated, String query, String radius, String limit) {
 
-        return mFoursquareApi.executeSearchNearbyPlacesQuery(latLonCommaSeparated, query, "browse", radius, limit)
+        return mFoursquareApi
+                .executeSearchNearbyPlacesQuery(
+                        latLonCommaSeparated, query, "browse", radius, limit)
                 .flatMap(respond ->
                         Observable.fromIterable(respond.getResponse().getVenues())
                                 .flatMap(venue ->
                                         mFoursquareApi
                                                 .executeObtainPlaceInfo(venue.getId())
-                                                .map(singleVenueRespond -> singleVenueRespond.getResponse().getVenue())
-                                                .map(venueExtended -> new Pair<>(venue, venueExtended)))
+                                                .map(singleVenueRespond ->
+                                                        singleVenueRespond.getResponse().getVenue())
+                                                .map(venueExtended ->
+                                                        new Pair<>(venue, venueExtended)))
                 );
     }
 

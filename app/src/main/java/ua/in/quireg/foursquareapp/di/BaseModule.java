@@ -2,6 +2,7 @@ package ua.in.quireg.foursquareapp.di;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 
@@ -38,13 +39,7 @@ public class BaseModule {
     @Provides
     @Singleton
     SharedPreferences provideDefaultSharedPreferences(FoursquareApplication application) {
-        return application.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(
+                application.getApplicationContext());
     }
-
-//    @Provides
-//    @Singleton
-//    ResourceManager providesResourceManager(FoursquareApplication application) {
-//        return new ResourceManager(application);
-//    }
-
 }

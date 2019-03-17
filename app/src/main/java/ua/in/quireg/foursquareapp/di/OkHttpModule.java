@@ -1,25 +1,17 @@
 package ua.in.quireg.foursquareapp.di;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.internal.cache.CacheInterceptor;
-import okhttp3.internal.cache.InternalCache;
 import okhttp3.logging.HttpLoggingInterceptor;
-import timber.log.Timber;
 import ua.in.quireg.foursquareapp.BuildConfig;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
-import ua.in.quireg.foursquareapp.repositories.PersistentStorage;
 
 /**
  * Created by Arcturus Mengsk on 1/18/2018, 3:54 PM.
@@ -43,6 +35,7 @@ public class OkHttpModule {
             HttpUrl url = originalHttpUrl.newBuilder()
                     .addQueryParameter("client_id", BuildConfig.CLIENT_ID)
                     .addQueryParameter("client_secret", BuildConfig.CLIENT_SECRET)
+                    //https://developer.foursquare.com/docs/api/configuration/versioning
                     .addQueryParameter("v", "20170801")
                     .build();
 
@@ -51,10 +44,10 @@ public class OkHttpModule {
 
             Request request = requestBuilder.build();
 
-
             return chain.proceed(request);
         });
 
+        //Cache requests to avoid running out of API quota.
         builder.addNetworkInterceptor(chain -> {
                     Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()

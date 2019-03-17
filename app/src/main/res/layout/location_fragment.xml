@@ -16,13 +16,12 @@
         android:layout_above="@id/current_radius"
         android:layout_marginBottom="16dp">
 
-        <ImageView
+        <ua.in.quireg.foursquareapp.ui.views.SmallerDimensionSizeImageView
             android:id="@+id/map_circle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:layout_centerInParent="true"
-            android:adjustViewBounds="true"
             android:src="@drawable/map_circle"
             tools:ignore="ContentDescription" />
 

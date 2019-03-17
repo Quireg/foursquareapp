@@ -35,7 +35,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
     @BindView(R.id.price_2_button) protected ToggleButton price_2_button;
     @BindView(R.id.price_3_button) protected ToggleButton price_3_button;
     @BindView(R.id.price_4_button) protected ToggleButton price_4_button;
-
     @BindView(R.id.current_loc_textview) protected TextView current_loc_textview;
 
     @InjectPresenter(type = PresenterType.WEAK)
@@ -71,21 +70,20 @@ public class FilterFragment extends MvpFragment implements FilterView {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
-
         unbinder = ButterKnife.bind(this, view);
-
         return view;
     }
 
     @OnClick(R.id.relevance_button)
-    void setSortbyRelevance() {
+    void setSortByRelevance() {
         mFilterScreenPresenter.onRelevanceClick();
     }
 
     @OnClick(R.id.distance_button)
-    void setSortbyDistance() {
+    void setSortByDistance() {
         mFilterScreenPresenter.onDistanceClick();
     }
 
@@ -119,38 +117,27 @@ public class FilterFragment extends MvpFragment implements FilterView {
         mFilterScreenPresenter.resetLocation();
     }
 
-
     @Override
     public void toggleRelevance(boolean relevance) {
-
-        if (relevance) {
-            relevance_button.setChecked(true);
-            distance_button.setChecked(false);
-        } else {
-            relevance_button.setChecked(false);
-            distance_button.setChecked(true);
-        }
-
+        relevance_button.setChecked(relevance);
+        distance_button.setChecked(!relevance);
     }
 
     @Override
     public void togglePriceTier(int tier) {
         // can't figure out better way to parse 4 bits of data =/
-
         if (tier - 8 >= 0) {
             tier = tier - 8;
             price_4_button.setChecked(true);
         } else {
             price_4_button.setChecked(false);
         }
-
         if (tier - 4 >= 0) {
             tier = tier - 4;
             price_3_button.setChecked(true);
         } else {
             price_3_button.setChecked(false);
         }
-
         if (tier - 2 >= 0) {
             tier = tier - 2;
             price_2_button.setChecked(true);
@@ -162,7 +149,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
         } else {
             price_1_button.setChecked(false);
         }
-
     }
 
     @Override

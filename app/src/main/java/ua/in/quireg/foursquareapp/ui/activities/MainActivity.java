@@ -1,12 +1,9 @@
 package ua.in.quireg.foursquareapp.ui.activities;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
-import java.security.Permission;
 
 import javax.inject.Inject;
 
@@ -21,17 +18,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject NavigatorHolder mNavigatorHolder;
     @Inject MainRouter mMainRouter;
-
     private MainNavigator mNavigator = new MainNavigator(MainActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FoursquareApplication.getAppComponent().inject(this);
-
         setContentView(R.layout.activity_main);
-
         super.onCreate(savedInstanceState);
-
         if (savedInstanceState == null) {
             mMainRouter.welcomeScreen();
         }
@@ -50,12 +43,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionManager.LOCATION_REQUEST_ID && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == PermissionManager.LOCATION_REQUEST_ID
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mMainRouter.welcomeScreen();
         }
-
     }
-
 }
