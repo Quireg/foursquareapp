@@ -121,19 +121,21 @@ public class MapViewFragment extends Fragment {
                     .target(mCurrentLocation)
                     .zoom(calcZoomLevelForDistance(mCurrentAreaRadius * 2).floatValue())
                     .build();
-
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            mMap.getUiSettings().setZoomGesturesEnabled(false);
-            updateDistanceIndicator();
 
             int seekBarStepInMeters = (RADIUS_HIGH - RADIUS_LOW) / mSeekBar.getMax();
+            int step = (RADIUS_HIGH - RADIUS_LOW) / mSeekBar.getMax();
+            mCurrentAreaRadius = RADIUS_LOW + (step * mSeekBar.getProgress());
 
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(
+                    calcZoomLevelForDistance(mCurrentAreaRadius * 2).floatValue()));
+            updateDistanceIndicator();
+
+            mMap.getUiSettings().setZoomGesturesEnabled(false);
             mSeekBar.setProgress(DEFAULT_SEARCH_RADIUS / seekBarStepInMeters);
-
             mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
                     int step = (RADIUS_HIGH - RADIUS_LOW) / mSeekBar.getMax();
                     mCurrentAreaRadius = RADIUS_LOW + (step * progress);
 

@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import ru.terrakok.cicerone.Cicerone;
 import ru.terrakok.cicerone.NavigatorHolder;
+import ua.in.quireg.foursquareapp.mvp.routing.BackStack;
 import ua.in.quireg.foursquareapp.mvp.routing.MainRouter;
 
 /**
@@ -32,5 +33,11 @@ public class NavigationModule {
     @Singleton
     NavigatorHolder provideNavigatorHolder() {
         return cicerone.getNavigatorHolder();
+    }
+
+    @Provides
+    @Singleton
+    BackStack provideBackStack() {
+        return new BackStack();
     }
 }

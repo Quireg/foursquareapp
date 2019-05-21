@@ -15,6 +15,8 @@ import android.widget.ToggleButton;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -45,6 +47,7 @@ public class FilterFragment extends MvpFragment implements FilterView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -74,14 +77,17 @@ public class FilterFragment extends MvpFragment implements FilterView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filter_screen, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.filter_screen_title);
+        Objects.requireNonNull(((MainActivity) getActivity())
+                .getSupportActionBar()).setTitle(R.string.filter_screen_title);
+        Objects.requireNonNull(((MainActivity) getActivity())
+                .getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     @OnClick(R.id.relevance_button)
@@ -169,7 +175,6 @@ public class FilterFragment extends MvpFragment implements FilterView {
         if (price_2_button.isChecked()) i = i + 2;
         if (price_3_button.isChecked()) i = i + 4;
         if (price_4_button.isChecked()) i = i + 8;
-
         mFilterScreenPresenter.updatePriceFilter(i);
     }
 }

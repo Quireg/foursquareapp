@@ -20,6 +20,8 @@ public interface PlacesListView extends MvpView {
 
     void setList(List<PlaceEntity> place);
 
+    void cancelSearch();
+
     void clearList();
 
     void toggleLoadingView(boolean visible);

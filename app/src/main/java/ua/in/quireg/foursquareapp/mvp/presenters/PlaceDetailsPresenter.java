@@ -6,6 +6,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.domain.PlaceDetailsInteractor;
@@ -26,11 +27,10 @@ public class PlaceDetailsPresenter extends MvpPresenter<PlaceDetailsView> {
     protected MainRouter mRouter;
 
     PlaceDetailsInteractor mPlaceDetailsInteractor = new PlaceDetailsInteractor();
-
     CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    private int currentTipsOffset = 0;
-    private boolean shouldFetchTips = true;
+    private int mCurrentTipsOffset = 0;
+    private boolean mShouldFetchTips = true;
 
     public PlaceDetailsPresenter(String id) {
         super();
@@ -41,7 +41,6 @@ public class PlaceDetailsPresenter extends MvpPresenter<PlaceDetailsView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-
         obtainPlaceInfo();
         obtainPlacePhoto();
         obtainPlaceTips();
@@ -58,72 +57,66 @@ public class PlaceDetailsPresenter extends MvpPresenter<PlaceDetailsView> {
     }
 
     private void obtainPlaceInfo() {
-        mCompositeDisposable.add(
-                mPlaceDetailsInteractor
-                        .getPlaceDetails(mPlaceId)
-                        .subscribe(
-                                placeEntityExtended -> getViewState().setPlaceInfo(placeEntityExtended),
-                                throwable -> {
-                                    mRouter.showErrorDialog(throwable.getLocalizedMessage());
-                                    Timber.e(throwable);
-                                }
-                        )
-        );
+        Disposable d = mPlaceDetailsInteractor
+                .getPlaceDetails(mPlaceId)
+                .subscribe(
+                        placeEntityExtended -> getViewState().setPlaceInfo(placeEntityExtended),
+                        throwable -> {
+                            mRouter.showErrorDialog(throwable.getLocalizedMessage());
+                            Timber.w(throwable.getLocalizedMessage());
+                        }
+                );
+        mCompositeDisposable.add(d);
     }
 
     private void obtainPlacePhoto() {
-        mCompositeDisposable.add(
-                mPlaceDetailsInteractor
-                        .getPlacePhotos(mPlaceId)
-                        .subscribe(
-                                photosList -> getViewState().setPlacePhotos(photosList),
-                                throwable -> {
-                                    mRouter.showErrorDialog(throwable.getLocalizedMessage());
-                                    Timber.e(throwable);
-                                }
-                        )
-        );
+        Disposable d = mPlaceDetailsInteractor
+                .getPlacePhotos(mPlaceId)
+                .subscribe(
+                        photosList -> getViewState().setPlacePhotos(photosList),
+                        throwable -> {
+                            mRouter.showErrorDialog(throwable.getLocalizedMessage());
+                            Timber.w(throwable.getLocalizedMessage());
+                        }
+                );
+        mCompositeDisposable.add(d);
     }
 
     private void obtainPlaceTips() {
-
-        if (!shouldFetchTips) return;
-        shouldFetchTips = false;
+        if (!mShouldFetchTips) return;
+        mShouldFetchTips = false;
 
         getViewState().toggleTipsLoading(true);
-        int tipsOffsetBeforeFetch = currentTipsOffset;
+        int tipsOffsetBeforeFetch = mCurrentTipsOffset;
 
-        mCompositeDisposable.add(
-                mPlaceDetailsInteractor
-                        .getPlaceTip(mPlaceId, String.valueOf(currentTipsOffset))
-                        .subscribe(
-                                tipEntity -> {
-                                    getViewState().toggleTipsLayout(true);
-                                    getViewState().setPlaceTip(tipEntity);
-                                    currentTipsOffset++;
-                                },
-                                throwable -> {
-                                    mRouter.showErrorDialog(throwable.getLocalizedMessage());
-                                    getViewState().toggleTipsLoading(false);
-                                    getViewState().toggleTipsLayout(false);
-                                    Timber.w(throwable);
+        Disposable d = mPlaceDetailsInteractor
+                .getPlaceTip(mPlaceId, String.valueOf(mCurrentTipsOffset))
+                .subscribe(
+                        tipEntity -> {
+                            getViewState().toggleTipsLayout(true);
+                            getViewState().setPlaceTip(tipEntity);
+                            mCurrentTipsOffset++;
+                        },
+                        throwable -> {
+                            mRouter.showErrorDialog(throwable.getLocalizedMessage());
+                            getViewState().toggleTipsLoading(false);
+                            getViewState().toggleTipsLayout(false);
+                            Timber.w(throwable.getLocalizedMessage());
 
-                                    shouldFetchTips = true;
-                                },
-                                () -> {
-                                    getViewState().toggleTipsLoading(false);
-                                    shouldFetchTips = true;
+                            mShouldFetchTips = true;
+                        },
+                        () -> {
+                            getViewState().toggleTipsLoading(false);
+                            mShouldFetchTips = true;
 
-                                    if (currentTipsOffset == 0) {
-                                        getViewState().toggleTipsLayout(false);
-                                    }
-
-                                    if (tipsOffsetBeforeFetch == currentTipsOffset) {
-                                        shouldFetchTips = false;
-                                    }
-                                }
-                        )
-        );
+                            if (mCurrentTipsOffset == 0) {
+                                getViewState().toggleTipsLayout(false);
+                            }
+                            if (tipsOffsetBeforeFetch == mCurrentTipsOffset) {
+                                mShouldFetchTips = false;
+                            }
+                        }
+                );
+        mCompositeDisposable.add(d);
     }
-
 }

@@ -20,7 +20,7 @@ public class MvpFragment extends Fragment {
 
     private boolean mIsStateSaved;
     private MvpDelegate<? extends MvpFragment> mMvpDelegate;
-    protected Unbinder unbinder;
+    protected Unbinder mUnbinder;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +72,8 @@ public class MvpFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (unbinder != null) {
-            unbinder.unbind();
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
         }
 
         //We leave the screen and respectively all fragments will be destroyed

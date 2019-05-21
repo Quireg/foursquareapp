@@ -22,4 +22,10 @@
         android:checkable="true"
         android:title="@string/use_mock_loc"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/animations"
+        android:checkable="true"
+        android:title="@string/use_anim"
+        app:showAsAction="never" />
 </menu>

@@ -42,6 +42,9 @@ import ua.in.quireg.foursquareapp.mvp.views.PlaceDetailsView;
 public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsView {
 
     private static final String EXTRA_PLACE_ID = "extra_name";
+    private static final int MAP_BEARING = 0;
+    private static final int MAP_TILT = 30;
+    private static final int MAP_ZOOM = 14;
 
     @BindView(R.id.image1) ImageView mImage1;
     @BindView(R.id.image2) ImageView mImage2;
@@ -57,19 +60,61 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
     @BindView(R.id.tips_layout) LinearLayout mTipsLinearLayout;
     @BindView(R.id.root_scrollview) ScrollView mScrollView;
 
-    private LayoutInflater mInflater;
-
-    @ProvidePresenter(type = PresenterType.WEAK)
+    @ProvidePresenter
     PlaceDetailsPresenter providePlaceDetailsPresenter() {
         return new PlaceDetailsPresenter(getArguments().getString(EXTRA_PLACE_ID));
     }
 
-    @InjectPresenter(type = PresenterType.WEAK)
+    @InjectPresenter
     PlaceDetailsPresenter mPlaceDetailsPresenter;
+
+    public static PlaceDetailsFragment getNewInstance(String id) {
+        PlaceDetailsFragment fragment = new PlaceDetailsFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(EXTRA_PLACE_ID, id);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        View view = inflater.inflate(R.layout.fragment_place_details_screen, container, false);
+
+        mUnbinder = ButterKnife.bind(this, view);
+
+        mScrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (mScrollView != null) {
+                if (mScrollView.getChildAt(0).getBottom() <=
+                        (mScrollView.getHeight() + mScrollView.getScrollY())) {
+                    //scroll view is at bottom
+                    mPlaceDetailsPresenter.loadMorePlaceTips();
+                }
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void setPlaceInfo(PlaceEntity e) {
-
         if (getActivity().getActionBar() != null) {
             getActivity().getActionBar().setTitle(e.getName());
         }
@@ -87,24 +132,23 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
         }
 
         ((MapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(googleMap -> {
-
             googleMap.setBuildingsEnabled(true);
-
             googleMap.getUiSettings().setMapToolbarEnabled(false);
-
             googleMap.setOnMapClickListener(latLng -> {
                 //do nothing
             });
 
-            LatLng coords = new LatLng(e.getLocationEntity().getLat(), e.getLocationEntity().getLon());
+            LatLng latLng = new LatLng(e.getLocationEntity().getLat(), e.getLocationEntity().getLon());
 
-            googleMap.addMarker(new MarkerOptions().position(coords).title(e.getName()));
-
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(coords).zoom(14).tilt(30).bearing(0).build();
-
+            googleMap.addMarker(new MarkerOptions().position(latLng).title(e.getName()));
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(latLng)
+                    .zoom(MAP_ZOOM)
+                    .tilt(MAP_TILT)
+                    .bearing(MAP_BEARING)
+                    .build();
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         });
-
     }
 
     @Override
@@ -128,102 +172,35 @@ public class PlaceDetailsFragment extends MvpFragment implements PlaceDetailsVie
 
     @Override
     public void setPlaceTip(TipEntity tip) {
-
-        View tipView = mInflater.inflate(R.layout.single_tip_simple, mTipsLinearLayout, false);
+        View tipView = LayoutInflater.from(getActivity())
+                .inflate(R.layout.single_tip_simple, mTipsLinearLayout, false);
 
         TextView tipText = tipView.findViewById(R.id.tip_text);
         TextView authorName = tipView.findViewById(R.id.author_name);
         ImageView authorImg = tipView.findViewById(R.id.author_img);
         TextView likes = tipView.findViewById(R.id.likes);
         ImageView likes_img = tipView.findViewById(R.id.likes_img);
-
         tipText.setText(tip.getTipText());
         authorName.setText(tip.getAuthorName());
-
         if (tip.getLikes() != null && Integer.parseInt(tip.getLikes()) > 0) {
             likes.setText(tip.getLikes());
             likes_img.setVisibility(View.VISIBLE);
             likes.setVisibility(View.VISIBLE);
         }
-
         Glide.with(getActivity().getApplicationContext())
                 .load(tip.getAuthorImage())
                 .into(authorImg);
-
         mTipsLinearLayout.addView(tipView);
     }
 
     @Override
     public void toggleTipsLoading(boolean isLoading) {
-        if (isLoading) {
-            mTipsProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            mTipsProgressBar.setVisibility(View.INVISIBLE);
-        }
+        mTipsProgressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
     public void toggleTipsLayout(boolean visible) {
-        if (visible) {
-            mNoTips.setVisibility(View.INVISIBLE);
-            mTipsLinearLayout.setVisibility(View.VISIBLE);
-        } else {
-            mNoTips.setVisibility(View.VISIBLE);
-            mTipsLinearLayout.setVisibility(View.INVISIBLE);
-        }
+        mNoTips.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        mTipsLinearLayout.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
-
-    public static PlaceDetailsFragment getNewInstance(String id) {
-        PlaceDetailsFragment fragment = new PlaceDetailsFragment();
-
-        Bundle arguments = new Bundle();
-        arguments.putString(EXTRA_PLACE_ID, id);
-        fragment.setArguments(arguments);
-
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home: {
-                getActivity().onBackPressed();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
-        mInflater = inflater;
-
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        View view = inflater.inflate(R.layout.fragment_place_details_screen, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
-
-        mScrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
-            if (mScrollView != null) {
-                if (mScrollView.getChildAt(0).getBottom() <= (mScrollView.getHeight() + mScrollView.getScrollY())) {
-                    //scroll view is at bottom
-                    mPlaceDetailsPresenter.loadMorePlaceTips();
-                }
-            }
-
-        });
-        return view;
-    }
-
 }

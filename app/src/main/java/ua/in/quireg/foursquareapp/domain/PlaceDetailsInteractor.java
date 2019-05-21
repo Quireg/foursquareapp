@@ -64,18 +64,17 @@ public class PlaceDetailsInteractor {
         PlaceEntity placeEntity = new PlaceEntity();
 
         if (venueExtended == null) {
-            throw new RuntimeException("received null response from api");
+            return placeEntity;
         }
-
         if (venueExtended.getId() != null) {
             placeEntity.setId(venueExtended.getId());
         }
-
         if (venueExtended.getName() != null) {
             placeEntity.setName(venueExtended.getName());
         }
-
-        if (venueExtended.getCategories() != null && !venueExtended.getCategories().isEmpty() && venueExtended.getCategories().get(0).getName() != null) {
+        if (venueExtended.getCategories() != null
+                && !venueExtended.getCategories().isEmpty()
+                && venueExtended.getCategories().get(0).getName() != null) {
             placeEntity.setType(venueExtended.getCategories().get(0).getName());
         }
         if (venueExtended.getRating() != null) {
@@ -85,23 +84,30 @@ public class PlaceDetailsInteractor {
             placeEntity.setRatingColor("#".concat(venueExtended.getRatingColor()));
         }
         if (venueExtended.getPrice() != null && venueExtended.getPrice().getTier() != null) {
-            placeEntity.setPriceCategory(new String(new char[venueExtended.getPrice().getTier()]).replace("\0", "$"));
+            placeEntity.setPriceCategory(
+                    new String(new char[venueExtended.getPrice().getTier()])
+                            .replace("\0", "$"));
         }
         if (venueExtended.getLocation() != null && venueExtended.getLocation().getAddress() != null) {
             placeEntity.setAddress(venueExtended.getLocation().getAddress());
         }
         if (venueExtended.getBestPhoto() != null) {
-            placeEntity.setImageUri(venueExtended.getBestPhoto().getPrefix(), venueExtended.getBestPhoto().getSuffix());
+            placeEntity.setImageUri(
+                    venueExtended.getBestPhoto().getPrefix(),
+                    venueExtended.getBestPhoto().getSuffix());
         }
-
-        if (venueExtended.getPage() != null && venueExtended.getPage().getPageInfo() != null && venueExtended.getPage().getPageInfo().getDescription() != null) {
+        if (venueExtended.getPage() != null
+                && venueExtended.getPage().getPageInfo() != null
+                && venueExtended.getPage().getPageInfo().getDescription() != null) {
             placeEntity.setDescription(venueExtended.getPage().getPageInfo().getDescription());
         }
-
-        if (venueExtended.getLocation() != null && venueExtended.getLocation().getLat() != null && venueExtended.getLocation().getLng() != null) {
-            placeEntity.setLocationEntity(new LocationEntity(venueExtended.getLocation().getLat(), venueExtended.getLocation().getLng()));
+        if (venueExtended.getLocation() != null
+                && venueExtended.getLocation().getLat() != null
+                && venueExtended.getLocation().getLng() != null) {
+            placeEntity.setLocationEntity(new LocationEntity(
+                    venueExtended.getLocation().getLat(),
+                    venueExtended.getLocation().getLng()));
         }
-
         return placeEntity;
     }
 
@@ -109,16 +115,14 @@ public class PlaceDetailsInteractor {
         List<Uri> photoUris = new ArrayList<>();
 
         for (int i = 0; i < photos.getItems().size(); i++) {
-            photoUris.add(Uri.parse(
-                    photos.getItems().get(i).getPrefix() + "300x300" + photos.getItems().get(i).getSuffix()
-                    )
-            );
+            photoUris.add(
+                    Uri.parse(photos.getItems().get(i).getPrefix()
+                            + "300x300" + photos.getItems().get(i).getSuffix()));
         }
         return photoUris;
     }
 
     private List<TipEntity> mapTips(Tips tips) {
-
         ArrayList<TipEntity> tipEntities = new ArrayList<>();
 
         for (int i = 0; i < tips.getItems().size(); i++) {
@@ -144,10 +148,8 @@ public class PlaceDetailsInteractor {
                                 "100x100" +
                                 tips.getItems().get(i).getUser().getPhoto().getSuffix()
                 ));
-
                 tipEntities.add(tipEntity);
             } catch (Exception e) {
-                //I know that it is a bad practice, however I am a bit tired of nullptr from api.
                 Timber.e(e);
             }
         }

@@ -22,6 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
 import ua.in.quireg.foursquareapp.FoursquareApplication;
 import ua.in.quireg.foursquareapp.R;
@@ -62,7 +63,8 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
             String.valueOf(mPersistentStorage.getAreaFromCache())
     );
     private List<PlaceEntity> mPlacesAroundList = new ArrayList<>();
-    private List<PlaceEntity> mPlacesFromSearchList = new ArrayList<>();
+
+    private boolean mSearchInProgress = false;
 
     public PlacesListPresenter() {
         super();
@@ -92,35 +94,42 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
     }
 
     public void onSearchRequest(Observable<String> stringObservable) {
-        stringObservable
+        PublishSubject<String> publishSubject = PublishSubject.create();
+
+        Observable<String> searchQuery = stringObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(s -> !s.isEmpty())
                 .filter(s1 -> checkPreconditions())
-                .map(q -> {
+                .map(s2 -> {
+                    mSearchInProgress = true;
                     getViewState().setListTitle(String.format(
-                            mFoursquareApplication.getString(R.string.search_list_title), q));
-                    return q;
-                })
-                .switchMap(query -> mPlacesListInteractor
+                            mFoursquareApplication.getString(R.string.search_list_title), s2));
+                    fetchSearchData(Observable.just(s2));
+                    return s2;
+                });
+        searchQuery.subscribe(publishSubject);
+    }
+
+    private void fetchSearchData(Observable<String> o) {
+        Disposable d = o
+                .flatMap(s -> mPlacesListInteractor
                         .getPlaces(
-                                query,
+                                s,
                                 mPersistentStorage.getLocationFromCache().getLatLonCommaSeparated(),
                                 String.valueOf(mPersistentStorage.getAreaFromCache()),
-                                DEFAULT_LIMIT)
-                        .map(placeEntity -> {
-                            Timber.d("Thread: %s", Thread.currentThread().getName());
-                            return placeEntity;
-                        })
-                        .subscribeOn(Schedulers.io())
-                )
-                .map(placeEntity -> {
-                    mPlacesFromSearchList.add(placeEntity);
-                    return placeEntity;
-                })
+                                DEFAULT_LIMIT))
                 .toList()
-                .toObservable()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(mPlacesAroundObserver);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    getViewState().clearList();
+                    getViewState().setList(list);
+                    getViewState().toggleLoadingView(false);
+                }, error -> {
+                    getViewState().setListTitle(
+                            mFoursquareApplication.getString(R.string.search_list_title_failed));
+                    getViewState().toggleLoadingView(false);
+                });
+        mCompositeDisposable.add(d);
     }
 
     private void getNearbyPlaces(String lonLatCommaSeparated, String radius) {
@@ -138,17 +147,25 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                 .subscribe(mPlacesAroundObserver);
     }
 
-    public void onSearchCanceled() {
-        Observable.just(mPlacesAroundList)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(mPlacesAroundObserver);
+    public boolean onBackPressed() {
+        if (mSearchInProgress) {
+            mSearchInProgress = false;
+            getViewState().cancelSearch();
+            mCompositeDisposable.clear();
+
+            Observable.just(mPlacesAroundList)
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mPlacesAroundObserver);
+            return true;
+        }
+        return false;
     }
 
     private Observer<List<PlaceEntity>> mPlacesAroundObserver = new Observer<List<PlaceEntity>>() {
         @Override
         public void onSubscribe(Disposable d) {
             getViewState().setListTitle(
-                    mFoursquareApplication.getString(R.string.looading));
+                    mFoursquareApplication.getString(R.string.loading));
             mCompositeDisposable.add(d);
         }
 
@@ -202,7 +219,6 @@ public class PlacesListPresenter extends MvpPresenter<PlacesListView> {
                     String.valueOf(mPersistentStorage.getAreaFromCache()));
         }
     }
-
 
     public boolean checkPreconditions() {
         getViewState().toggleLoadingView(true);

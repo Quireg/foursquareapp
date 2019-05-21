@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import ua.in.quireg.foursquareapp.R;
 import ua.in.quireg.foursquareapp.common.Utils;
@@ -36,6 +39,12 @@ import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
 
 public class WelcomeFragment extends MvpFragment implements WelcomeView {
 
+    private static final int WELCOME_ANIM_DURATION = 1200; //ms
+    private static final int EXIT_ANIM_DURATION = 1200; //ms
+
+    private boolean mAnimationsEnabled = true;
+    private int OFFSCREEN_OFFSET_X;
+
     @BindView(R.id.welcome_text)
     TextView mWelcomeText;
     @BindView(R.id.request_permissions)
@@ -47,20 +56,15 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
 
     @InjectPresenter
     WelcomeScreenPresenter mWelcomeScreenPresenter;
+    CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
-            getActivity().getActionBar().setTitle(R.string.app_name);
-        }
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_welcome_screen, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
-
+        mUnbinder = ButterKnife.bind(this, view);
+        OFFSCREEN_OFFSET_X = Utils.getDisplaySize(getActivity().getApplicationContext()).x * -1;
         return view;
     }
 
@@ -75,70 +79,95 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
     }
 
     @Override
-    public void animateEnterFragment(int duration) {
-        animateCloudIn(duration).start();
-    }
-
-    @Override
-    public void animateExitFragment(int duration) {
-        animateCloudOut(duration).start();
-        mWelcomeText.setText("");
-        animateToggleViewVisibility(mRequestPermissionsButton, false);
-        animateToggleViewVisibility(mLookAroundButton, false);
+    public void setAnimationsEnabled(boolean enabled) {
+        mAnimationsEnabled = enabled;
     }
 
     @Override
     public void setReadyState() {
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet
-                .play(animateText(R.string.permission_ok_text, false))
-                .before(animateToggleViewVisibility(mLookAroundButton, true));
-        animatorSet.start();
+        if (mAnimationsEnabled) {
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.play(animateText(R.string.permission_ok_text, WELCOME_ANIM_DURATION))
+                    .with(animateCloudIn(WELCOME_ANIM_DURATION))
+                    .before(animateToggleViewVisibility(mLookAroundButton, true));
+            animatorSet.start();
+        } else {
+            mCloudImageView.setX(0);
+            mCloudImageView.setVisibility(View.VISIBLE);
+            mWelcomeText.setText(R.string.permission_ok_text);
+            mLookAroundButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void setPermissionsRequiredState() {
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(animateText(R.string.permission_required_text, false))
-                .before(animateToggleViewVisibility(mRequestPermissionsButton, true));
-        animatorSet.start();
+        if (mAnimationsEnabled) {
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.play(animateText(R.string.permission_required_text, WELCOME_ANIM_DURATION))
+                    .with(animateCloudIn(WELCOME_ANIM_DURATION))
+                    .before(animateToggleViewVisibility(mRequestPermissionsButton, true));
+            animatorSet.start();
+        } else {
+            mCloudImageView.setX(0);
+            mCloudImageView.setVisibility(View.VISIBLE);
+            mWelcomeText.setText(R.string.permission_required_text);
+            mRequestPermissionsButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void clearState() {
+        if (mAnimationsEnabled) {
+            AnimatorSet outAnimatorSet = new AnimatorSet();
+            outAnimatorSet.setDuration(EXIT_ANIM_DURATION);
+
+            AnimatorSet.Builder builder =
+                    outAnimatorSet.play(animateToggleViewVisibility(mWelcomeText, false));
+            builder.with(animateToggleViewVisibility(mCloudImageView, false));
+
+            if (mRequestPermissionsButton.getVisibility() == View.VISIBLE) {
+                builder.with(animateToggleViewVisibility(mRequestPermissionsButton, false));
+            }
+            if (mLookAroundButton.getVisibility() == View.VISIBLE) {
+                builder.with(animateToggleViewVisibility(mLookAroundButton, false));
+            }
+            outAnimatorSet.start();
+        } else {
+            mRequestPermissionsButton.setVisibility(View.INVISIBLE);
+            mLookAroundButton.setVisibility(View.INVISIBLE);
+            mCloudImageView.setX(OFFSCREEN_OFFSET_X);
+            mCloudImageView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.not_a_title);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    public Animator animateText(int resId, boolean append) {
-        if (!append) {
-            mWelcomeText.setText("");
-        }
-        int pauseBetweenLetters = 50;
-
-        final String[] lettersArray = getResources().getString(resId).split("");
-
-        Observable<String> textEmitObservable = Observable
-                .interval(pauseBetweenLetters, TimeUnit.MILLISECONDS)
-                .map(i -> lettersArray[i.intValue()])
-                .take(lettersArray.length)
-                .concatMap(Observable::just)
-                .observeOn(AndroidSchedulers.mainThread());
+    @SuppressLint("SetTextI18n")
+    public Animator animateText(@StringRes int textToAnimate, int duration) {
+        final char[] lettersArray = getResources().getString(textToAnimate).toCharArray();
 
         ValueAnimator textAnimator = ValueAnimator.ofInt(0);
-
-        textAnimator.setDuration(pauseBetweenLetters * lettersArray.length);
-
-        Animator.AnimatorListener animatorListener = new Animator.AnimatorListener() {
+        textAnimator.setDuration(duration);
+        textAnimator.addListener(new Animator.AnimatorListener() {
             Disposable d = null;
 
             @Override
             public void onAnimationStart(Animator animation) {
-                d = textEmitObservable.subscribe(
-                        s -> mWelcomeText.setText(String.format("%s%s", mWelcomeText.getText(), s)),
-                        t -> animation.end(),
-                        animation::end
-                );
+                mWelcomeText.setText("");
+                long pauseBetweenLetters = textAnimator.getDuration()/ lettersArray.length;
+                d = Observable.interval(pauseBetweenLetters, TimeUnit.MILLISECONDS)
+                        .map(i -> lettersArray[i.intValue()])
+                        .take(lettersArray.length)
+                        .concatMap(Observable::just)
+                        .map(character -> Character.toString(character))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(s -> mWelcomeText.setText(mWelcomeText.getText() + s));
+                mCompositeDisposable.add(d);
             }
 
             @Override
@@ -154,10 +183,7 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
             @Override
             public void onAnimationRepeat(Animator animation) {
             }
-        };
-
-        textAnimator.addListener(animatorListener);
-
+        });
         return textAnimator;
     }
 
@@ -166,19 +192,15 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
     }
 
     private Animator animateCloudIn(int duration) {
-
         AnimatorSet animatorSet = new AnimatorSet();
 
         final float WAVE_AMPLITUDE = 192f;
-
-        final int OFFSCREEN_OFFSET_X =
-                Utils.getDisplaySize(getActivity().getApplicationContext()).x * -1;
 
         //Set initial offset behind the screen
         mCloudImageView.setX(OFFSCREEN_OFFSET_X);
 
         ObjectAnimator cloudAnimVisibility =
-                ObjectAnimator.ofArgb(mCloudImageView, "visibility", 0, 1);
+                ObjectAnimator.ofInt(mCloudImageView, "visibility", 0, 1);
 
         //Animate cloud movement
         ValueAnimator cloudMoveAnim = ValueAnimator.ofInt(0, 1).setDuration(duration);
@@ -201,12 +223,11 @@ public class WelcomeFragment extends MvpFragment implements WelcomeView {
         final int OFFSCREEN_OFFSET_X = -1 * Utils.getDisplaySize(
                 getActivity().getApplicationContext()).x;
         ObjectAnimator cloudAnimMoveOut = ObjectAnimator.ofFloat(
-                        mCloudImageView, "x", 0, OFFSCREEN_OFFSET_X)
-                        .setDuration(duration);
+                mCloudImageView, "x", 0, OFFSCREEN_OFFSET_X)
+                .setDuration(duration);
         ObjectAnimator cloudAnimVisibility = ObjectAnimator.ofArgb(
                 mCloudImageView, "visibility", 1, 0);
         animatorSet.play(cloudAnimVisibility).after(cloudAnimMoveOut);
         return animatorSet;
     }
-
 }

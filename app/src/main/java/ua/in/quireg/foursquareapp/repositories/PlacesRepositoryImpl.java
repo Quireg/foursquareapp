@@ -2,10 +2,8 @@ package ua.in.quireg.foursquareapp.repositories;
 
 import android.support.v4.util.Pair;
 
-import java.util.Iterator;
-import java.util.function.Consumer;
-
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import ua.in.quireg.foursquareapp.repositories.api_models.search_venues.Venue;
 import ua.in.quireg.foursquareapp.repositories.api_models.single_venue.VenueExtended;
@@ -32,6 +30,7 @@ public class PlacesRepositoryImpl implements PlacesRepository {
         return mFoursquareApi
                 .executeSearchNearbyPlacesQuery(
                         latLonCommaSeparated, query, "browse", radius, limit)
+                .subscribeOn(Schedulers.io())
                 .flatMap(respond -> Observable.fromIterable(respond.getResponse().getVenues()))
                 .flatMap(venue ->
                         mFoursquareApi

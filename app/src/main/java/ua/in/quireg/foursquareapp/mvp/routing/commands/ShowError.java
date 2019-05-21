@@ -9,13 +9,13 @@ import ru.terrakok.cicerone.commands.Command;
 
 public class ShowError implements Command {
 
-    private String errorText;
+    private String mErrorText = "";
 
     public ShowError(String errorText) {
-        this.errorText = errorText;
+        mErrorText = mErrorText.concat(errorText);
     }
 
     public String getErrorText() {
-        return errorText;
+        return mErrorText;
     }
 }

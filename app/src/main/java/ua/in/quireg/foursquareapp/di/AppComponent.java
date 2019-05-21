@@ -6,9 +6,11 @@ import dagger.Component;
 import ua.in.quireg.foursquareapp.domain.PlaceDetailsInteractor;
 import ua.in.quireg.foursquareapp.domain.PlacesListInteractor;
 import ua.in.quireg.foursquareapp.mvp.presenters.FilterScreenPresenter;
+import ua.in.quireg.foursquareapp.mvp.presenters.MainActivityPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlaceDetailsPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.PlacesListPresenter;
 import ua.in.quireg.foursquareapp.mvp.presenters.WelcomeScreenPresenter;
+import ua.in.quireg.foursquareapp.mvp.routing.MainNavigator;
 import ua.in.quireg.foursquareapp.repositories.PersistentStorageImpl;
 import ua.in.quireg.foursquareapp.repositories.PlacesRepositoryImpl;
 import ua.in.quireg.foursquareapp.ui.activities.MainActivity;
@@ -48,5 +50,9 @@ public interface AppComponent {
     void inject(PersistentStorageImpl i);
 
     void inject(PlacesListFragment i);
+
+    void inject(MainActivityPresenter i);
+
+    void inject(MainNavigator i);
 
 }

@@ -18,6 +18,7 @@
     <string name="default_list_title">Places around. Search for more.</string>
     <string name="something_went_wrong">Something\'s wrong…</string>
     <string name="search_list_title">"Results for -%s- "</string>
+    <string name="search_list_title_failed">"Search failed."</string>
     <string name="loading">Loading…</string>
     <string name="looading">Loooading…</string>
 
@@ -54,4 +55,5 @@
     <string name="custom_location_filter_fragment">Custom location:\n %s \nArea: %dm</string>
     <string name="map_view_fragment_save">Save</string>
     <string name="use_mock_loc">Use mock loc</string>
+    <string name="use_anim">Animate intro</string>
 </resources>
